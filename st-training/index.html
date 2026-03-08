@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solidarity Tech Interactive Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --fdp-navy: #002868;
+            --fdp-red: #BF0A30;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333333;
+            --tip-bg: #e8f4f8;
+            --tip-border: #0099cc;
+            --callout-bg: #ffe8e8;
+            --callout-border: #BF0A30;
+            --highlight-bg: #fff3cd;
+            --highlight-border: #ffc107;
+            --success-bg: #d4edda;
+            --success-border: #28a745;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            border-top: 4px solid var(--fdp-red);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            max-width: 120px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--fdp-navy);
+            flex-grow: 1;
+        }
+
+        .progress-bar-container {
+            width: 150px;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--fdp-navy), var(--fdp-red));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--fdp-navy);
+            font-weight: 600;
+            text-align: right;
+            min-width: 40px;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--fdp-navy);
+            margin: 5px 0;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translateY(10px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translateY(-10px);
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 250px;
+            background-color: var(--fdp-navy);
+            color: var(--white);
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 500;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-section {
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 1.5rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--fdp-red);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left-color: var(--fdp-red);
+            font-weight: 600;
+        }
+
+        .nav-sub-item {
+            display: none;
+            padding: 0.5rem 1.5rem 0.5rem 3rem;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+
+        .nav-sub-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--fdp-red);
+        }
+
+        .nav-sub-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left-color: var(--fdp-red);
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .nav-item.expanded ~ .nav-sub-item {
+            display: block;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        .section {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--fdp-navy);
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--fdp-red);
+            padding-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: var(--fdp-navy);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .section-text {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* Callout Styles */
+        .callout {
+            padding: 1rem 1rem 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+            border-radius: 4px;
+            background-color: var(--callout-bg);
+            border-color: var(--callout-border);
+        }
+
+        .callout.important {
+            background-color: var(--callout-bg);
+            border-color: var(--callout-border);
+        }
+
+        .callout.important::before {
+            content: "⚠ IMPORTANT: ";
+            font-weight: 700;
+            color: var(--callout-border);
+        }
+
+        .callout.tip {
+            background-color: var(--tip-bg);
+            border-color: var(--tip-border);
+        }
+
+        .callout.tip::before {
+            content: "💡 TIP: ";
+            font-weight: 700;
+            color: var(--tip-border);
+        }
+
+        .callout.highlight {
+            background-color: var(--highlight-bg);
+            border-color: var(--highlight-border);
+            border-left: 4px solid var(--highlight-border);
+        }
+
+        .callout.highlight::before {
+            content: "★ KEY DIFFERENCE: ";
+            font-weight: 700;
+            color: var(--highlight-border);
+        }
+
+        .callout-text {
+            display: inline;
+        }
+
+        /* Collapsible Content */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-weight: 600;
+            color: var(--fdp-navy);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible-header:hover {
+            background-color: #e8e8e8;
+        }
+
+        .collapsible-header.open {
+            background-color: var(--fdp-red);
+            color: var(--white);
+        }
+
+        .toggle-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .collapsible-header.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: var(--light-gray);
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 0 1rem;
+        }
+
+        .collapsible-content.open {
+            max-height: 2000px;
+            padding: 1rem;
+        }
+
+        /* Step Lists */
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+            margin: 1.5rem 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            background-color: var(--light-gray);
+            border-left: 4px solid var(--fdp-navy);
+            border-radius: 4px;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0.5rem;
+            top: 0.75rem;
+            width: 30px;
+            height: 30px;
+            background-color: var(--fdp-navy);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        thead {
+            background-color: var(--fdp-navy);
+            color: var(--white);
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+
+        tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Images */
+        .image-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .image-caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Videos */
+        .video-container {
+            margin: 1.5rem 0;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #000;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checklist li:hover {
+            background-color: #e8e8e8;
+        }
+
+        .checklist li input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--fdp-navy);
+        }
+
+        .checklist li.checked {
+            background-color: var(--success-bg);
+        }
+
+        .checklist li.checked label {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .checklist label {
+            flex-grow: 1;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Tab System (for roles and other sections) */
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--fdp-navy);
+        }
+
+        .tab-button.active {
+            color: var(--fdp-navy);
+            border-bottom-color: var(--fdp-red);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .two-column-left, .two-column-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 100%;
+                z-index: 450;
+            }
+
+            .sidebar.mobile-hidden {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .header-content {
+                padding: 0.5rem 1rem;
+            }
+
+            .logo {
+                height: 40px;
+            }
+
+            .header-title {
+                font-size: 1.1rem;
+            }
+
+            .progress-bar-container {
+                width: 100px;
+            }
+
+            .progress-text {
+                font-size: 0.65rem;
+            }
+
+            .section {
+                padding: 1.5rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+                border-bottom: none;
+            }
+
+            .tab-button {
+                border-bottom: none;
+                border-left: 3px solid transparent;
+                text-align: left;
+            }
+
+            .tab-button.active {
+                border-bottom: none;
+                border-left-color: var(--fdp-red);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                gap: 0.5rem;
+            }
+
+            .logo {
+                height: 35px;
+            }
+
+            .header-title {
+                font-size: 0.9rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .hamburger, .progress-bar-container {
+                display: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <img src="media/image1.png" alt="FDP Logo" class="logo">
+            <h1 class="header-title">Solidarity Tech Interactive Training</h1>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-text"><span id="progress-percent">0</span>%</div>
+            <button class="hamburger" id="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Getting Started</div>
+                <a class="nav-item active" data-section="section-1">What Is Solidarity Tech?</a>
+                <a class="nav-item" data-section="section-2">How to Log In</a>
+                <a class="nav-item" data-section="section-3">Understanding Your Dashboard</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Core Features</div>
+                <a class="nav-item" data-section="section-4">Your Role & Permissions</a>
+                <a class="nav-item" data-section="section-5">Events: Complete Walkthrough</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-a">Part A: Create the Event</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-b">Part B: Event Creation Walkthrough</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-c">Part C: Adding Sessions</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-d">Part D: Sessions Walkthrough</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-e">Part E: Event Settings</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-f">Part F: Other Event Tabs</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-g">Part G: Create & Share Event Page</a>
+                <a class="nav-sub-item" data-section="section-5" data-anchor="section-5-part-h">Part H: Event Page Walkthrough</a>
+                <a class="nav-item" data-section="section-6">Managing RSVPs & Attendance</a>
+                <a class="nav-sub-item" data-section="section-6" data-anchor="section-6-checking-signups">Checking Who Signed Up</a>
+                <a class="nav-sub-item" data-section="section-6" data-anchor="section-6-checking-in">Checking People In</a>
+                <a class="nav-sub-item" data-section="section-6" data-anchor="section-6-self-checkin">Self Check-In QR Code</a>
+                <a class="nav-sub-item" data-section="section-6" data-anchor="section-6-walkthrough">Taking Attendance Walkthrough</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">People & Pages</div>
+                <a class="nav-item" data-section="section-7">Finding & Viewing Contacts</a>
+                <a class="nav-item" data-section="section-8">Searching & Filtering</a>
+                <a class="nav-item" data-section="section-9">Adding a New Contact</a>
+                <a class="nav-item" data-section="section-10">Creating Forms & Sign-Up Pages</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Support</div>
+                <a class="nav-item" data-section="section-11">Troubleshooting & Help</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Section 1: What Is Solidarity Tech? -->
+            <section id="section-1" class="section active">
+                <h2 class="section-title">What Is Solidarity Tech?</h2>
+
+                <p class="section-text">Solidarity Tech is a centralized organizing platform designed to help volunteers like you coordinate campaigns, manage events, and track organizing efforts. Whether you're working at the dashboard, on mobile, or sharing sign-up pages with supporters, Solidarity Tech is your command center for volunteer engagement.</p>
+
+                <h3 class="section-subtitle">Three Ways to Use Solidarity Tech</h3>
+
+                <div class="section-subtitle" style="font-size: 1.15rem; color: var(--fdp-navy); font-weight: 600; margin-top: 1.5rem;">The Dashboard (Website)</div>
+                <p class="section-text">Your main command center is at <strong>dashboard.solidarity.tech</strong>. This is where you'll do most of your organizing work, from creating events to managing volunteers.</p>
+                <div class="image-container">
+                    <img src="media/image2.png" alt="Solidarity Tech Dashboard">
+                    <div class="image-caption">Figure 1: The Solidarity Tech Dashboard</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem; color: var(--fdp-navy); font-weight: 600; margin-top: 1.5rem;">The Mobile App</div>
+                <p class="section-text">Organize on the go! Download the mobile app at <strong>solidarity.tech/app</strong> available on both iOS and Android.</p>
+                <div class="image-container">
+                    <img src="media/image3.png" alt="Solidarity Tech Mobile App">
+                    <div class="image-caption">Figure 2: The Mobile App</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem; color: var(--fdp-navy); font-weight: 600; margin-top: 1.5rem;">Sign-Up Pages</div>
+                <p class="section-text">These are the web pages supporters see when they're signing up to volunteer. You create these through Solidarity Tech and share them on social media, flyers, or emails to recruit volunteers.</p>
+                <div class="image-container">
+                    <img src="media/image4.png" alt="Sign-Up Page Example">
+                    <div class="image-caption">Figure 3: Sign-Up Page for Supporters</div>
+                </div>
+
+                <h3 class="section-subtitle">What You'll Do with Solidarity Tech</h3>
+                <ul class="step-list">
+                    <li>Create and manage events</li>
+                    <li>Recruit and track volunteers</li>
+                    <li>Coordinate volunteer recruitment efforts (email, phone banking, texting*)</li>
+                </ul>
+                <p class="section-text" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"><em>*Email, phone banking, and texting features will be available at a later date.</em></p>
+
+                <h3 class="section-subtitle">What Solidarity Tech Does NOT Do</h3>
+                <ul class="step-list">
+                    <li>No voter data - this is volunteer organizing only</li>
+                    <li>It does not replace VoteBuilder - use Solidarity Tech for volunteers, VoteBuilder for voters</li>
+                </ul>
+
+                <div class="callout tip">
+                    <span class="callout-text">Think of Solidarity Tech as your volunteer management system. It helps you organize volunteers, but doesn't handle voter information or voter outreach.</span>
+                </div>
+            </section>
+
+            <!-- Section 2: How to Log In -->
+            <section id="section-2" class="section">
+                <h2 class="section-title">How to Log In</h2>
+
+                <p class="section-text">Getting access to Solidarity Tech is a three-step process: receive an invitation, create your account, and log in. Let's walk through each step.</p>
+
+                <h3 class="section-subtitle">Step 1: Receive Your Invitation</h3>
+                <p class="section-text">To get started with Solidarity Tech, your DEC chair or the FDP Data Team will add you to the system. You'll receive an invitation via text or email with a link to set up your account.</p>
+                <div class="image-container">
+                    <img src="media/image5.png" alt="Invitation Text/Email">
+                    <div class="image-caption">Figure 4: Example Invitation</div>
+                </div>
+
+                <h3 class="section-subtitle">Step 2: Create Your Account</h3>
+                <p class="section-text">Click the invitation link, and you'll be taken to a page where you can set up your account. Enter your email, create a password, and click Submit.</p>
+                <div class="image-container">
+                    <img src="media/image6.png" alt="Account Creation Screen">
+                    <div class="image-caption">Figure 5: Account Creation</div>
+                </div>
+
+                <div class="callout important">
+                    <span class="callout-text">You must complete account creation by clicking the invitation link and submitting your details. Simply being in the contacts database is not enough to log in. You need your own user account.</span>
+                </div>
+
+                <h3 class="section-subtitle">Step 3: Log In</h3>
+                <p class="section-text">Now you're ready to log in!</p>
+                <ul class="step-list">
+                    <li><strong>On Computer:</strong> Go to <strong>dashboard.solidarity.tech</strong></li>
+                    <li><strong>On Phone:</strong> Download the app from <strong>solidarity.tech/app</strong> (iOS App Store or Google Play)</li>
+                </ul>
+                <div class="image-container">
+                    <img src="media/image7.png" alt="Login Screen">
+                    <div class="image-caption">Figure 6: Dashboard Login</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">Bookmark dashboard.solidarity.tech in your browser so you can quickly access it in the future.</span>
+                </div>
+
+                <h3 class="section-subtitle">Forgot Your Password?</h3>
+                <p class="section-text">If you forget your password, follow these steps:</p>
+                <ul class="step-list">
+                    <li>Go to the login page</li>
+                    <li>Click "Forgot Password"</li>
+                    <li>Enter your email address</li>
+                    <li>Check your email for a password reset link</li>
+                </ul>
+                <div class="image-container">
+                    <img src="media/image8.png" alt="Password Reset">
+                    <div class="image-caption">Figure 7: Password Reset</div>
+                </div>
+
+                <div class="callout important">
+                    <span class="callout-text">Password reset only works if you've already created your account by clicking the invitation link. If you never completed account setup, ask your DEC chair or the FDP Data Team to resend your invitation.</span>
+                </div>
+            </section>
+
+            <!-- Section 3: Understanding Your Dashboard -->
+            <section id="section-3" class="section">
+                <h2 class="section-title">Understanding Your Dashboard</h2>
+
+                <p class="section-text">Once you've logged in, you'll see the Solidarity Tech dashboard. It's organized to give you quick access to all the tools you need for organizing.</p>
+
+                <h3 class="section-subtitle">The Left Sidebar</h3>
+                <p class="section-text">The left sidebar contains the main navigation menu. Here's what you'll find:</p>
+                <ul class="step-list">
+                    <li><strong>People</strong> - View and manage your volunteer contacts (Admin only)</li>
+                    <li><strong>Events</strong> - Create and manage events</li>
+                    <li><strong>Pages</strong> - Create sign-up pages and forms</li>
+                    <li><strong>Email</strong> - Send emails to volunteers</li>
+                    
+                </ul>
+                <div class="image-container">
+                    <img src="media/image9.png" alt="Dashboard Sidebar">
+                    <div class="image-caption">Figure 8: Left Sidebar Navigation</div>
+                </div>
+
+                <h3 class="section-subtitle">Your Scope</h3>
+                <p class="section-text">In the top left corner of your dashboard, you'll see "Your Scope." This controls which contacts and events you can see. If you work with multiple organizations, you can switch between them here.</p>
+                <div class="image-container">
+                    <img src="media/image10.png" alt="Scope Selector">
+                    <div class="image-caption">Figure 9: Scope Selector in Top Left</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">If you can't find an event or contact you're looking for, the first thing to check is your scope. You might be viewing the wrong organization's data.</span>
+                </div>
+            </section>
+
+            <!-- Section 4: Your Role & What You Can Do -->
+            <section id="section-4" class="section">
+                <h2 class="section-title">Your Role & What You Can Do</h2>
+
+                <p class="section-text">Your access to Solidarity Tech depends on your role. There are three main roles in Solidarity Tech, each with different permissions.</p>
+
+                <h3 class="section-subtitle">Role Overview</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Description</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Admin</strong></td>
+                            <td>Full access to all features</td>
+                            <td>DEC chairs and organizing leads</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Organizer</strong></td>
+                            <td>Can create and manage events, pages, and draft emails</td>
+                            <td>Event coordinators and recruiters</td>
+                        </tr>
+                        <tr>
+                            <td><strong>User</strong></td>
+                            <td>Can participate in workflows (check in, view contacts)</td>
+                            <td>Volunteer coordinators at events</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">Detailed Permissions by Role</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Admin</th>
+                            <th>Organizer</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>View contacts</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Edit contacts</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Create events</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Take attendance/check in</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+                        <tr>
+                            <td>Create pages</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Draft emails</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Send emails</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout tip">
+                    <span class="callout-text">If a button is grayed out or missing when you're trying to do something, it means your role doesn't include that permission. This is not a bug - it's working as designed. Contact your DEC chair if you need more access.</span>
+                </div>
+            </section>
+
+            <!-- Section 5: Events: Complete Walkthrough -->
+            <section id="section-5" class="section">
+                <h2 class="section-title">Events: The Complete Walkthrough</h2>
+
+                <p class="section-text"><strong>Key Point:</strong> The main difference between Solidarity Tech and Mobilize for event creation is that event sessions and event pages are different things rather than one page. An event is your internal management tool (sessions, RSVPs, etc.), while the event page is what you share with supporters to recruit them.</p>
+
+                <!-- Part A: Create the Event -->
+                <h3 class="section-subtitle" id="section-5-part-a">Part A: Create the Event</h3>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 1: Open Events Menu</div>
+                <p class="section-text">Click "Events" in the left sidebar, then click "Create New Event" button in the top right.</p>
+                <div class="image-container">
+                    <img src="media/image11.png" alt="Events Menu">
+                    <div class="image-caption">Figure 10: Accessing Events Menu</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 2: Create New Event</div>
+                <p class="section-text">You'll see the Create New Event form.</p>
+                <div class="image-container">
+                    <img src="media/image12.png" alt="Create Event Form">
+                    <div class="image-caption">Figure 11: Create Event Form</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 3: Enter Event Title</div>
+                <p class="section-text">Give your event a clear, descriptive name. Here are some examples:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Good Names</th>
+                            <th>Names to Avoid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>School Board Town Hall - March 15</td>
+                            <td>Event1, Meeting, Important Thing</td>
+                        </tr>
+                        <tr>
+                            <td>Phone Banking: City Council Campaign</td>
+                            <td>stuff, test</td>
+                        </tr>
+                        <tr>
+                            <td>Canvassing - Downtown District</td>
+                            <td>ASAP, Urgent</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="image-container">
+                    <img src="media/image13.png" alt="Event Title">
+                    <div class="image-caption">Figure 12: Entering Event Title</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 4: Select Event Type</div>
+                <p class="section-text">Choose between two event types:</p>
+                <ul class="step-list">
+                    <li><strong>In-Person:</strong> Physical location with address</li>
+                    <li><strong>Virtual:</strong> Online event with meeting link or Zoom account</li>
+                </ul>
+                <div class="image-container">
+                    <img src="media/image14.png" alt="Event Type Selection">
+                    <div class="image-caption">Figure 13: Choosing Event Type</div>
+                </div>
+
+                <div class="callout important">
+                    <span class="callout-text">You cannot change an event's type after creation. Choose carefully between In-Person and Virtual.</span>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">For hybrid events (both in-person and online), create the event as In-Person and include the virtual meeting link in your event description, emails, and text messages. Solidarity Tech is working on a hybrid event type option but for now this is the best way to handle Hybrid events.</span>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 5: Set the Location</div>
+                <p class="section-text">Depending on your event type:</p>
+                <ul class="step-list">
+                    <li><strong>In-Person:</strong> Enter the full address. Solidarity Tech will auto-complete the address as you type.</li>
+                    <li><strong>Virtual:</strong> Select Zoom account (if available) or paste a meeting link</li>
+                </ul>
+                <div class="image-container">
+                    <img src="media/image15.png" alt="In-Person Location">
+                    <div class="image-caption">Figure 14: Setting In-Person Location</div>
+                </div>
+                <div class="image-container">
+                    <img src="media/image16.png" alt="Virtual Location">
+                    <div class="image-caption">Figure 15: Setting Virtual Meeting Link</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 6: Set Date and Time</div>
+                <p class="section-text">Select the date and start/end times for your event.</p>
+                <div class="image-container">
+                    <img src="media/image18.png" alt="Setting Date and Time">
+                    <div class="image-caption">Figure 17: Setting Date/Time</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">The time setting is right below the calendar. Make sure to set both the start and end times after selecting your date.</span>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Step 7: Create/Save Your Event</div>
+                <p class="section-text">Click "Create" or "Save" to complete the event creation. Your event is now in the system!</p>
+
+                <!-- Part B: Full Event Creation Walkthrough -->
+                <h3 class="section-subtitle" id="section-5-part-b">Part B: Full Event Creation Walkthrough</h3>
+                <p class="section-text">Watch this video walkthrough of the entire event creation process from start to finish:</p>
+                <div class="video-container">
+                    <video controls width="100%" style="max-width: 600px;">
+                        <source src="media/eventcreation.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Part C: Adding Sessions -->
+                <h3 class="section-subtitle" id="section-5-part-c">Part C: Adding Sessions</h3>
+
+                <p class="section-text">Events can have one or more sessions. Each session has its own start time, end time, location, and title. This is useful for recurring events or events with multiple time slots.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Adding a Single Session</div>
+                <p class="section-text">Follow these steps to add a session to your event:</p>
+                <ol class="step-list">
+                    <li>Open your event</li>
+                    <li>Click on the "Schedule" tab</li>
+                    <li>Click "Add Session"</li>
+                    <li>Set the session start and end times</li>
+                    <li>Set the session location (can be different from event location)</li>
+                    <li>Set the session title (optional)</li>
+                    <li>Click "Create"</li>
+                    <li>Your session is added to the event</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image19.png" alt="Schedule Tab">
+                    <div class="image-caption">Figure 18: Schedule Tab with Add Session Button</div>
+                </div>
+                <div class="image-container">
+                    <img src="media/image20.png" alt="Add Session Form">
+                    <div class="image-caption">Figure 19: Adding a Session</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">If you edit a session after people have already RSVP'd, the system will ask if you want to send updated calendar invitations to everyone who signed up.</span>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Making an Event Recurring</div>
+                <p class="section-text">For events that happen on a regular schedule (weekly meetings, daily shifts), you can set them to repeat automatically:</p>
+                <ol class="step-list">
+                    <li>Create your first event session as normal</li>
+                    <li>Click "Add Session" again</li>
+                    <li>Instead of adding a single session, look for "Make Recurring"</li>
+                    <li>Choose the recurrence pattern: Daily, Weekly, or Monthly</li>
+                    <li>Set when the recurring sessions should end</li>
+                    <li>Click "Create"</li>
+                    <li>Solidarity Tech will automatically create all the sessions</li>
+                </ol>
+
+                <!-- Part D: Adding Event Sessions Walkthrough -->
+                <h3 class="section-subtitle" id="section-5-part-d">Part D: Adding Event Sessions Walkthrough</h3>
+                <p class="section-text">Watch this video walkthrough of adding sessions to an event:</p>
+                <div class="video-container">
+                    <video controls width="100%" style="max-width: 600px;">
+                        <source src="media/eventsessions.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Part E: Event Settings -->
+                <h3 class="section-subtitle" id="section-5-part-e">Part E: Event Settings</h3>
+                <p class="section-text">Before creating the event page and sharing your event, review the settings to make sure everything is configured correctly. At the bottom right of the page select Edit to view the event settings.</p>
+
+                <ul class="step-list">
+                    <li><strong>Languages:</strong> Set what languages information about this event will be available in</li>
+                    <li><strong>Event/Campaign Tags:</strong> Tag your event for organizing and filtering (e.g., "Private" to hide from main calendar)</li>
+                    <li><strong>Enable RSVP Confirmation:</strong> Adds a "Confirm" button that appears before the event for a more accurate headcount</li>
+                    <li><strong>Enable Host Tools:</strong> Generate a public link for event hosts to view RSVPs, mark attendance, and contact attendees without logging in</li>
+                </ul>
+
+                <div class="image-container">
+                    <img src="media/image23.png" alt="Event Settings">
+                    <div class="image-caption">Figure 22: Event Settings Panel</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">Host Tools is great for volunteer hosts, coalition partners, or field leads who need RSVP info but should not have full dashboard access.</span>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">You can clone an existing event (click the ... menu and select Clone) to quickly create a new one with the same settings, sessions, and event page.</span>
+                </div>
+
+                <!-- Deep Dive 1: Event Session Settings -->
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>Deep Dive: Event Session Settings (Optional)</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;">Once you've created sessions, you can edit them by clicking the Edit button on each session. Here are the key settings:</p>
+                    <ul style="margin: 1rem 0; margin-left: 2rem;">
+                        <li><strong>Host Tools:</strong> Gives volunteer hosts access to check people in without a full dashboard account</li>
+                        <li><strong>Self Check-In Link:</strong> A link or QR code that volunteers can use to check themselves in</li>
+                        <li><strong>Delete:</strong> You can delete event sessions</li>
+                    </ul>
+                    <div class="image-container">
+                        <img src="media/image21.png" alt="Session Settings">
+                        <div class="image-caption">Figure 20: Session Settings Options</div>
+                    </div>
+                </div>
+
+                <!-- Deep Dive 2: Recurring Sessions & Settings -->
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>Deep Dive: Recurring Sessions & Settings (Optional)</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;">For events that occur on a regular schedule, Solidarity Tech can automatically create multiple sessions. This is useful for:</p>
+                    <ul style="margin: 1rem 0; margin-left: 2rem;">
+                        <li>Weekly team meetings</li>
+                        <li>Daily phone banking shifts</li>
+                        <li>Monthly town halls</li>
+                    </ul>
+                    <p style="margin: 1rem 0;">Here's how recurring session settings work:</p>
+                    <div class="image-container">
+                        <img src="media/recurringsessionsettings.gif" alt="Recurring Session Settings" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                        <div class="image-caption">Figure 21: Recurring Session Settings (auto-playing)</div>
+                    </div>
+                </div>
+
+                <!-- Part F: Other Event Tabs -->
+                <h3 class="section-subtitle" id="section-5-part-f">Part F: Other Event Tabs</h3>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">The Invited Tab</div>
+                <p class="section-text">You can set who is able to be RSVP'd for the event by an organizer. For instance, only allow people who have the Assessment of DEC/CC Member to be RSVP'd if this is an official DEC/CC Meeting where only members can attend.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">The Event Automations Tab</div>
+                <p class="section-text">Events come with built-in automated messages that you can turn on/off:</p>
+                <div class="image-container">
+                    <img src="media/image24.png" alt="Automations">
+                    <div class="image-caption">Figure 23: Event Automations Setup</div>
+                </div>
+                <ul class="step-list">
+                    <li><strong>RSVP Confirmation Emails:</strong> Sent when someone signs up</li>
+                    <li><strong>Reminder Emails/Texts:</strong> Sent the day before and/or the day of the event</li>
+                    <li><strong>Team Member Triggered Communications:</strong> Text templates that team members can send to people who have RSVP'd</li>
+                </ul>
+                <p class="section-text">These automations can be customized per event and translated into multiple languages.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">The RSVPs Tab</div>
+                <p class="section-text">This tab shows the people who have RSVP'd for the event and their current status. You can choose what event session you are looking at with the dropdown in the top right.</p>
+                <div class="image-container">
+                    <img src="media/image25.png" alt="RSVPs Tab">
+                    <div class="image-caption">Figure 24: Viewing RSVPs</div>
+                </div>
+
+                <!-- Part G: Create & Share the Event Page -->
+                <h3 class="section-subtitle" id="section-5-part-g">Part G: Create & Share the Event Page</h3>
+
+                <div class="callout highlight">
+                    <span class="callout-text">In Solidarity Tech, event sessions and event pages are SEPARATE. The event is what you manage internally, and the event page is what you share with the public to get them to sign up.</span>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Creating the Event Page</div>
+                <p class="section-text">Here's how to create a page where supporters can sign up for your event:</p>
+                <ol class="step-list">
+                    <li>Open your event</li>
+                    <li>Click on the "Schedule" tab</li>
+                    <li>Select "Create Event Page"</li>
+                    <li>Select your organizations website and select Create Event Page</li>
+                    <li>Enter a title (usually the same as your event)</li>
+                    <li>Add a content image</li>
+                    <li>Write a description explaining why people should attend</li>
+                    <li>Add any merge tags, images, videos, or additional details</li>
+                    <li>Click "Publish" to make it live</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image26.png" alt="Creating a New Event Page">
+                    <div class="image-caption">Figure 25: Creating a New Event Page</div>
+                </div>
+                <div class="image-container">
+                    <img src="media/image27.png" alt="Entering Page Details">
+                    <div class="image-caption">Figure 26: Entering Page Details</div>
+                </div>
+                <div class="image-container">
+                    <img src="media/image28.png" alt="Final Event Page">
+                    <div class="image-caption">Figure 27: Final Event Page</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Sharing Your Event Page</div>
+                <p class="section-text">Once your event page is published, share it with the world:</p>
+                <ul class="step-list">
+                    <li>The event should automatically appear on your Solidarity Tech Org Homepage unless it is tagged Private</li>
+                    <li>Copy the page link from the page settings</li>
+                    <li>Post it on social media (Facebook, Twitter, etc.)</li>
+                    <li>Add it to your event flyers and email campaigns</li>
+                    <li>Email it to your volunteer list</li>
+                </ul>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Sharing Settings</div>
+                <p class="section-text">Customize how your event page appears when shared:</p>
+                <div class="image-container">
+                    <img src="media/image30.png" alt="Sharing Settings">
+                    <div class="image-caption">Figure 29: Event Page Sharing Settings</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">What Happens After Someone Signs Up</div>
+                <p class="section-text">When someone clicks your event page and signs up:</p>
+                <ol class="step-list">
+                    <li>They appear in your RSVPs tab</li>
+                    <li>They receive a confirmation email</li>
+                    <li>They receive reminder emails/texts before the event</li>
+                    <li>Their contact information is saved in Solidarity Tech</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">Solidarity Tech automatically handles confirmations and reminders, so you don't have to manage those manually. You can focus on organizing!</span>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Pre-Publish Checklist</div>
+                <p class="section-text">Before you share your event page with the world, make sure you've covered everything:</p>
+                <ul class="checklist">
+                    <li><input type="checkbox" id="check1"><label for="check1">Event name is clear and descriptive</label></li>
+                    <li><input type="checkbox" id="check2"><label for="check2">Date, time, and location are correct</label></li>
+                    <li><input type="checkbox" id="check3"><label for="check3">Sessions are set up</label></li>
+                    <li><input type="checkbox" id="check4"><label for="check4">Organizer is assigned</label></li>
+                    <li><input type="checkbox" id="check5"><label for="check5">Event page is created with good description</label></li>
+                    <li><input type="checkbox" id="check6"><label for="check6">Automations are turned on (confirmations, reminders)</label></li>
+                </ul>
+
+                <!-- Part H: Full Event Page Creation Walkthrough -->
+                <h3 class="section-subtitle" id="section-5-part-h">Part H: Full Event Page Creation Walkthrough</h3>
+                <p class="section-text">Watch this video walkthrough of creating and sharing an event page:</p>
+                <div class="video-container">
+                    <video controls width="100%" style="max-width: 600px;">
+                        <source src="media/eventpage.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </section>
+
+            <!-- Section 6: Managing RSVPs & Attendance -->
+            <section id="section-6" class="section">
+                <h2 class="section-title">Events: Managing RSVPs & Attendance</h2>
+
+                <p class="section-text">Once your event is live and volunteers are signing up, you need to manage who's coming and take attendance. Here's how to do it.</p>
+
+                <h3 class="section-subtitle" id="section-6-checking-signups">Checking Who Signed Up</h3>
+                <p class="section-text">To see all the volunteers who RSVP'd to your event:</p>
+                <ol class="step-list">
+                    <li>Click "Events" in the sidebar</li>
+                    <li>Click on your event</li>
+                    <li>Click the "RSVPs" tab</li>
+                    <li>You'll see everyone who signed up. You can filter by session if you have multiple time slots with the dropdown in the upper right.</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image31.png" alt="RSVPs List">
+                    <div class="image-caption">Figure 30: Viewing RSVPs</div>
+                </div>
+
+                <h3 class="section-subtitle" id="section-6-checking-in">Checking People In</h3>
+                <p class="section-text">When people arrive at your event, you need to mark them as present. There are two ways to do this:</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Method 1: Using Host Tools</div>
+                <p class="section-text">If you've enabled Host Tools for your event, volunteers can check people in using a simple interface:</p>
+                <ol class="step-list">
+                    <li>At the event, give volunteers the Host Tools link</li>
+                    <li>They can search for volunteer names</li>
+                    <li>Click the name to mark them checked in</li>
+                    <li>To add walk-ins (people who weren't on the RSVP list), click the + icon and add their info</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image32.png" alt="Host Tools Check In">
+                    <div class="image-caption">Figure 31: Host Tools Check-In Screen</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Method 2: Using Attendance Screen</div>
+                <p class="section-text">From the dashboard, you can also take attendance directly:</p>
+                <ol class="step-list">
+                    <li>Open your event</li>
+                    <li>Click "Take Attendance"</li>
+                    <li>Search for volunteers by name or phone number</li>
+                    <li>Click their name to mark them checked in</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image33.png" alt="Attendance Screen">
+                    <div class="image-caption">Figure 32: Dashboard Attendance Screen</div>
+                </div>
+
+                <h3 class="section-subtitle">Someone Shows Up Who Isn't in the System?</h3>
+                <p class="section-text">No problem! During check-in, if someone isn't in the system:</p>
+                <ol class="step-list">
+                    <li>Search their name or phone number</li>
+                    <li>If they're not found, click "Add New Contact"</li>
+                    <li>Enter their information</li>
+                    <li>Mark them checked in</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">This is a great way to capture new volunteer contacts at events. Every person who shows up gets added to your volunteer database automatically.</span>
+                </div>
+
+                <h3 class="section-subtitle" id="section-6-self-checkin">Self Check-In with QR Code</h3>
+                <p class="section-text">For a hands-off approach, you can generate a QR code that volunteers can scan to check themselves in:</p>
+                <ol class="step-list">
+                    <li>Open your event session</li>
+                    <li>Click the Edit button</li>
+                    <li>Find the "Self Check-In" section</li>
+                    <li>Copy the link or download the QR code</li>
+                    <li>Print the QR code and post it at your event</li>
+                    <li>Volunteers can scan it from their phone to check in</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image34.png" alt="Self Check-In QR Code">
+                    <div class="image-caption">Figure 33: Self Check-In QR Code</div>
+                </div>
+                <div class="image-container">
+                    <img src="media/selfcheckin.png" alt="Self Check-In Screen" style="max-width: 350px;">
+                    <div class="image-caption">Figure 34: Self Check-In Screen</div>
+                </div>
+
+                <!-- Taking Attendance Walkthrough -->
+                <h3 class="section-subtitle" id="section-6-walkthrough">Taking Attendance Walkthrough</h3>
+                <p class="section-text">Watch this video walkthrough of taking attendance at an event:</p>
+                <div class="video-container">
+                    <video controls width="100%" style="max-width: 600px;">
+                        <source src="media/takingattendance.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <p class="section-text" style="text-align: center; font-size: 0.9rem; color: #666;"><em>Video: Taking Attendance Walkthrough</em></p>
+            </section>
+
+            <!-- Section 7: Finding & Viewing Contacts -->
+            <section id="section-7" class="section">
+                <h2 class="section-title">People: Finding & Viewing Contacts</h2>
+
+                <p class="section-text">Solidarity Tech stores all your volunteer information in one place. Let's learn how to find and view volunteers in your contact list.</p>
+
+                <h3 class="section-subtitle">How to Find Someone</h3>
+                <p class="section-text">To look up a volunteer:</p>
+                <ol class="step-list">
+                    <li>Click "People" in the sidebar</li>
+                    <li>Use the filters on the left to narrow down your list (optional)</li>
+                    <li>Click on a person's name to open their profile</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image36.png" alt="People List">
+                    <div class="image-caption">Figure 35: Finding Contacts in People Section</div>
+                </div>
+
+                <h3 class="section-subtitle">What You See on a Profile</h3>
+                <p class="section-text">When you click on someone, you'll see their volunteer profile with lots of useful information:</p>
+                <div class="image-container">
+                    <img src="media/image37.png" alt="Contact Profile">
+                    <div class="image-caption">Figure 36: Volunteer Profile</div>
+                </div>
+
+                <p class="section-text">A profile includes:</p>
+                <ul class="step-list">
+                    <li><strong>Main Details:</strong> Name and Assessment</li>
+                    <li><strong>Activity Stream:</strong> Recent actions and communications</li>
+                    <li><strong>Contact Details:</strong> Phone, email, address</li>
+                    <li><strong>Chapters:</strong> Which groups or areas they're involved with</li>
+                    <li><strong>Language:</strong> Preferred language for communications</li>
+                    <li><strong>User Properties:</strong> Custom fields (volunteer type, skills, etc.)</li>
+                    <li><strong>RSVP History:</strong> Events they've signed up for</li>
+                    <li><strong>Attendance History:</strong> Events they've actually attended</li>
+                    <li><strong>Notes:</strong> Internal notes about the volunteer</li>
+                </ul>
+
+                <h3 class="section-subtitle">Viewing Your Contact List</h3>
+                <p class="section-text">In the People section, you have several ways to view and organize contacts:</p>
+                <ul class="step-list">
+                    <li><strong>Sort:</strong> Sort by name, date added, or last activity</li>
+                    <li><strong>Columns:</strong> Choose which information to display</li>
+                    <li><strong>Map View:</strong> See volunteers plotted on a map</li>
+                    <li><strong>Chart View:</strong> Visualize data about your volunteers</li>
+                </ul>
+            </section>
+
+            <!-- Section 8: Searching & Filtering -->
+            <section id="section-8" class="section">
+                <h2 class="section-title">People: Searching & Filtering</h2>
+
+                <p class="section-text">With a large volunteer list, you need powerful tools to find exactly who you're looking for. Solidarity Tech's filtering system makes it easy. This same filter is in multiple places in Solidarity Tech but the functionality is the same.</p>
+
+                <h3 class="section-subtitle">How to Use the Filter</h3>
+                <p class="section-text">Here's the step-by-step process for filtering your contacts:</p>
+                <ol class="step-list">
+                    <li>Click "People" in the sidebar</li>
+                    <li>Click the "Filter" button (usually a funnel icon)</li>
+                    <li>Click "Add Filter" to start building rules</li>
+                    <li>Select a property to filter by (Name, Location, Event RSVP'd to, etc.)</li>
+                    <li>Choose an operator: "is", "is not", "includes", "excludes", etc.</li>
+                    <li>Enter the value you're looking for</li>
+                    <li>To add more rules, click "Add Filter" again</li>
+                    <li>Choose whether rules should use AND or OR logic</li>
+                    <li>Click "Apply" to see results</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image38.png" alt="Filter Interface">
+                    <div class="image-caption">Figure 37: Advanced Filter Interface</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">Use "includes" for properties with multiple options (like Volunteer Type). Use "is" for specific single-value fields.</span>
+                </div>
+
+                <h3 class="section-subtitle">Useful Filters</h3>
+                <p class="section-text">Here are some common filters to help you find volunteers:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>What You Want</th>
+                            <th>How to Filter</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>New sign-ups from last week</td>
+                            <td>Created At is within last 7 days</td>
+                        </tr>
+                        <tr>
+                            <td>People who RSVP'd to a specific event</td>
+                            <td>RSVP'd Events includes [Event Name]</td>
+                        </tr>
+                        <tr>
+                            <td>People who actually attended an event</td>
+                            <td>Attended Events includes [Event Name]</td>
+                        </tr>
+                        <tr>
+                            <td>Volunteers in a certain area</td>
+                            <td>Location is [Zip Code/City] or Legislative Districts is [Congressional, Senate, House]</td>
+                        </tr>
+                        <tr>
+                            <td>Volunteers for specific events or projects</td>
+                            <td>Custom User Property: FDP - Volunteer Type includes includes [Type]</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">Saving a Filter as a List</h3>
+                <p class="section-text">Once you've created a filter you like, you can save it to use again and share with your team:</p>
+                <ol class="step-list">
+                    <li>Create your filter (as described above)</li>
+                    <li>Click "Save as List"</li>
+                    <li>Give your list a name (e.g., "New Volunteers This Week")</li>
+                    <li>Your team can now use this saved filter</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/fig38_new.png" alt="Saved Filter Lists">
+                    <div class="image-caption">Figure 38: Saved Filter Lists</div>
+                </div>
+
+                <div class="video-container">
+                    <video controls width="100%" style="max-width: 600px;">
+                        <source src="media/filter.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <p class="section-text" style="text-align: center; font-size: 0.9rem; color: #666;"><em>Video: Creating and Saving Filters</em></p>
+            </section>
+
+            <!-- Section 9: Adding a New Contact -->
+            <section id="section-9" class="section">
+                <h2 class="section-title">People: Adding a New Contact</h2>
+
+                <p class="section-text">You can add new volunteers to your system in multiple ways. Here's how to do it from the dashboard.</p>
+
+                <h3 class="section-subtitle">Adding Someone from the Dashboard</h3>
+                <p class="section-text">To manually add a new contact:</p>
+                <ol class="step-list">
+                    <li>Click "People" in the sidebar</li>
+                    <li>Click "Add Person" button</li>
+                    <li>Enter their First Name, Last Name, Phone, Email, and Zip</li>
+                    <li>Add any other information you have (address, volunteer type, etc.) using the add additional field dropdown</li>
+                    <li>Choose if you want to send them a welcome message</li>
+                    <li>Click "Save"</li>
+                </ol>
+                <div class="image-container">
+                    <img src="media/image40.png" alt="Add Person Form">
+                    <div class="image-caption">Figure 39: Adding a New Contact</div>
+                </div>
+
+                <h3 class="section-subtitle">Adding a Welcome Text (Optional)</h3>
+                <p class="section-text">When adding someone new, you have the option to send them an automatic welcome text from the Solidarity Tech phone number:</p>
+                <div class="image-container">
+                    <img src="media/image41.png" alt="Welcome Text Option">
+                    <div class="image-caption">Figure 40: Welcome Text Configuration</div>
+                </div>
+
+                <h3 class="section-subtitle">Adding someone new at an Event</h3>
+                <p class="section-text">An easy way to add someone new is during event check-in:</p>
+                <ol class="step-list">
+                    <li>At the event, either open host tools or open the attendance screen</li>
+                    <li>With Host Tools: Click the + icon and add their info</li>
+                    <li>With the attendance screen: Search for the person's name or phone number</li>
+                    <li>If they're not found, click "Create New Contact"</li>
+                    <li>Enter their information</li>
+                    <li>They're automatically marked as checked in</li>
+                    <li>They're now in your volunteer database</li>
+                </ol>
+            </section>
+
+            <!-- Section 10: Creating Forms & Sign-Up Pages -->
+            <section id="section-10" class="section">
+                <h2 class="section-title">Pages: Creating Forms & Sign-Up Pages</h2>
+
+                <p class="section-text">Beyond event pages, Solidarity Tech lets you create other types of pages to collect information from supporters and volunteers.</p>
+
+                <h3 class="section-subtitle">Types of Pages</h3>
+                <p class="section-text">Here are the different page types you can create:</p>
+                <div class="image-container">
+                    <img src="media/image42.png" alt="Page Types">
+                    <div class="image-caption">Figure 41: Available Page Types</div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Page Type</th>
+                            <th>What It Does</th>
+                            <th>Use For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Event Page</td>
+                            <td>Promotion and signup for an event</td>
+                            <td>Recruiting attendees</td>
+                        </tr>
+                        <tr>
+                            <td>Basic Form</td>
+                            <td>Collect custom information</td>
+                            <td>Surveys, applications, feedback</td>
+                        </tr>
+                        <tr>
+                            <td>Petition</td>
+                            <td>Collect signatures/support</td>
+                            <td>Building support for causes</td>
+                        </tr>
+                        <tr>
+                            <td>Landing Page</td>
+                            <td>Informational page with CTA</td>
+                            <td>Education, fundraising</td>
+                        </tr>
+                        <tr>
+                            <td>Blog Post</td>
+                            <td>Long-form content</td>
+                            <td>Sharing stories, education</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">Organization Volunteer Form</h3>
+                <p class="section-text">Solidarity Tech includes a default volunteer sign-up form that works with smart automations:</p>
+                <div class="image-container">
+                    <img src="media/image43.png" alt="Volunteer Form">
+                    <div class="image-caption">Figure 42: Default Volunteer Form</div>
+                </div>
+
+                <p class="section-text">When someone fills out the volunteer form, here's what automatically happens:</p>
+                <ol class="step-list">
+                    <li>They receive a welcome email immediately</li>
+                    <li>Their Assessment is set to "Potential Volunteer"</li>
+                    <li>After 24 hours with no RSVP or event attendance, they get an email + text</li>
+                    <li>After 5 days with still no activity, they get another email</li>
+                    <li>Follow-up messages encourage them to get involved</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">These automations help you stay engaged with new volunteers without manually tracking everyone. The system handles the follow-ups for you!</span>
+                </div>
+            </section>
+
+            
+
+            <!-- Section 11: Troubleshooting & Common Questions -->
+            <section id="section-11" class="section">
+                <h2 class="section-title">Troubleshooting & Common Questions</h2>
+
+                <p class="section-text">Got a problem? Here are answers to the most common questions volunteers ask about Solidarity Tech.</p>
+
+                <h3 class="section-subtitle">Login Problems</h3>
+
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>I haven't received my login invitation</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> Contact your DEC chair. They need to add you to the Solidarity Tech system. Once they do, you'll receive an invitation via text or email. Check your spam folder if you don't see it right away.</p>
+                </div>
+
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>I clicked my invitation link but can't log in</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> Make sure you completed the account setup process by clicking the link and submitting your email and password. Simply being in the contacts database is not enough. If you've already done that and still can't log in, try the password reset process on the login page.</p>
+                </div>
+
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>I forgot my password</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> Go to the login page and click "Forgot Password." Enter your email address and follow the reset link sent to your email. Make sure to check your spam folder.</p>
+                </div>
+
+                <h3 class="section-subtitle">Quick Reference: Login Troubleshooting</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Problem</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>No invitation received</td>
+                            <td>Contact your DEC chair to be added to the system</td>
+                        </tr>
+                        <tr>
+                            <td>Can't log in after invitation</td>
+                            <td>Make sure you completed account setup; try password reset</td>
+                        </tr>
+                        <tr>
+                            <td>Invitation link expired</td>
+                            <td>Ask your DEC chair to resend the invitation</td>
+                        </tr>
+                        <tr>
+                            <td>Getting error messages when logging in</td>
+                            <td>Contact FDP Data Team or Solidarity Tech Support</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">Missing Events or Contacts</h3>
+                <p class="section-text"><strong>Problem:</strong> I can't find an event or contact I'm looking for.</p>
+                <p class="section-text"><strong>Solution:</strong> Check your scope (top left corner of dashboard). You might be viewing the wrong organization's data. Switch to the correct organization in your scope selector.</p>
+
+                <h3 class="section-subtitle">Event Issues</h3>
+
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>I created an In-Person event but need it to be Virtual (or vice versa)</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;"><strong>Problem:</strong> Event types cannot be changed after creation.</p>
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> For hybrid events, create the event as In-Person and include the virtual meeting link in your event description, emails, and SMS messages to attendees. Alternatively, delete the event and create a new one with the correct type (note: this will cancel any RSVPs).</p>
+                </div>
+
+                <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="toggle-icon">▼</span>
+                    <span>Someone showed up at my event without RSVPing</span>
+                </button>
+                <div class="collapsible-content">
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> No problem! You can add them as a walk-in during check-in. Either use Host Tools (click the + button) or search for them in the Attendance screen and create a new contact if they don't exist. They'll be added to your volunteer list automatically.</p>
+                </div>
+
+                <h3 class="section-subtitle">Permissions Issues</h3>
+                <p class="section-text"><strong>Problem:</strong> A button is grayed out and I can't do something I need to do.</p>
+                <p class="section-text"><strong>Solution:</strong> This means your role doesn't include that permission. Talk to your DEC chair about getting a role upgrade. Here's the quick reference:</p>
+                <ul class="step-list">
+                    <li>Can't see People? Your role might be User or Organizer - need Admin</li>
+                    <li>Can't create events? Your role might be User - need Organizer or Admin</li>
+                    <li>Can't send emails (only draft)? Your role might be Organizer - need Admin</li>
+                </ul>
+
+                <h3 class="section-subtitle">Getting Help</h3>
+                <p class="section-text">If you can't find the answer to your question here, here's who to contact:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Need access or higher permissions</td>
+                            <td>Your DEC or Organization Chair</td>
+                        </tr>
+                        <tr>
+                            <td>Technical problems or bugs</td>
+                            <td>FDP Data Team</td>
+                        </tr>
+                        <tr>
+                            <td>General support questions</td>
+                            <td>support@solidarity.tech</td>
+                        </tr>
+                        <tr>
+                            <td>Trainings</td>
+                            <td>FDP Data Team</td>
+                        </tr>
+                        <tr>
+                            <td>Feature questions</td>
+                            <td>FDP Data Team</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout tip">
+                    <span class="callout-text">Remember: Solidarity Tech has an active support team. Don't struggle alone - reach out to support@solidarity.tech if you're stuck!</span>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Navigation functionality
+        const navItems = document.querySelectorAll('.nav-item');
+        const navSubItems = document.querySelectorAll('.nav-sub-item');
+        const sections = document.querySelectorAll('.section');
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.getElementById('hamburger-menu');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetSection = item.getAttribute('data-section');
+
+                // Remove active class from all nav items and sections
+                navItems.forEach(nav => nav.classList.remove('active', 'expanded'));
+                navSubItems.forEach(sub => sub.classList.remove('active'));
+                sections.forEach(sec => sec.classList.remove('active'));
+
+                // Add active class to clicked item and corresponding section
+                item.classList.add('active', 'expanded');
+                document.getElementById(targetSection).classList.add('active');
+
+                // Update progress
+                updateProgress();
+
+                // Close mobile menu
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('mobile-hidden');
+                    hamburger.classList.remove('active');
+                }
+
+                // Scroll to top
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Sub-item navigation functionality
+        navSubItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetSection = item.getAttribute('data-section');
+                const targetAnchor = item.getAttribute('data-anchor');
+
+                // Remove active class from all nav items and sections
+                navItems.forEach(nav => nav.classList.remove('active', 'expanded'));
+                navSubItems.forEach(sub => sub.classList.remove('active'));
+                sections.forEach(sec => sec.classList.remove('active'));
+
+                // Add active/expanded class to parent nav item and corresponding section
+                const parentItem = document.querySelector(`.nav-item[data-section="${targetSection}"]`);
+                if (parentItem) {
+                    parentItem.classList.add('active', 'expanded');
+                }
+                item.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+
+                // Update progress
+                updateProgress();
+
+                // Scroll to anchor within section (with offset for fixed header)
+                setTimeout(() => {
+                    const anchorElement = document.getElementById(targetAnchor);
+                    if (anchorElement) {
+                        const headerOffset = 90;
+                        const elementPosition = anchorElement.getBoundingClientRect().top + window.pageYOffset;
+                        window.scrollTo({ top: elementPosition - headerOffset, behavior: 'smooth' });
+                    }
+                }, 100);
+
+                // Close mobile menu
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('mobile-hidden');
+                    hamburger.classList.remove('active');
+                }
+            });
+        });
+
+        // Hamburger menu toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('mobile-hidden');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                    sidebar.classList.add('mobile-hidden');
+                    hamburger.classList.remove('active');
+                }
+            }
+        });
+
+        // Collapsible sections
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const totalSections = sections.length;
+            const activeSectionIndex = Array.from(sections).findIndex(sec => sec.classList.contains('active'));
+            const progressPercent = Math.round(((activeSectionIndex + 1) / totalSections) * 100);
+
+            document.getElementById('progress-percent').textContent = progressPercent;
+            document.querySelector('.progress-bar').style.width = progressPercent + '%';
+        }
+
+        // Checkbox functionality for checklists
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const li = this.closest('li');
+                if (this.checked) {
+                    li.classList.add('checked');
+                } else {
+                    li.classList.remove('checked');
+                }
+            });
+        });
+
+        // Image click to expand/zoom
+        document.querySelectorAll('.image-container img').forEach(img => {
+            img.addEventListener('click', function() {
+                const modal = document.createElement('div');
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; cursor: pointer;';
+
+                const imgClone = document.createElement('img');
+                imgClone.src = this.src;
+                imgClone.style.cssText = 'max-width: 90%; max-height: 90%; border-radius: 8px;';
+
+                modal.appendChild(imgClone);
+                document.body.appendChild(modal);
+
+                modal.addEventListener('click', () => modal.remove());
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') modal.remove();
+                });
+            });
+        });
+
+        // Initialize progress on load
+        window.addEventListener('load', updateProgress);
+    </script>
+</body>
+</html>
