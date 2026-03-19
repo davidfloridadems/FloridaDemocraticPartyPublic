@@ -1803,7 +1803,6 @@
 
                 <p class="section-text">Before you send emails through Solidarity Tech, two things need to be set up: an <strong>Email Wrapper</strong> (the branded template that frames every email) and an <strong>Email Domain</strong> (your organization's sending address). Getting these right improves deliverability and makes your emails look professional and on-brand.</p>
 
-                <!-- Email Wrappers -->
                 <h3 class="section-subtitle" id="section-12-wrappers">Email Wrappers</h3>
 
                 <p class="section-text">An Email Wrapper is a reusable template that surrounds your email content. Every email you send — blasts, event confirmations, system notifications — is displayed inside a wrapper. Wrappers include your organization's logo, header, footer, brand colors, and the required mailing address for spam law compliance. You can create multiple wrappers for different email types (e.g., newsletters, action alerts, internal notices).</p>
@@ -1826,7 +1825,6 @@
                     <span class="callout-text">Every email sent through Solidarity Tech must use a wrapper. If no wrapper is selected, the system will prompt you to choose one before sending.</span>
                 </div>
 
-                <!-- Email Domains -->
                 <h3 class="section-subtitle" id="section-12-domains">Email Domains</h3>
 
                 <p class="section-text">Connecting a custom email domain (e.g., <strong>@yourorg.com</strong>) to Solidarity Tech improves deliverability and prevents your emails from landing in spam. It also makes your "From" address look professional rather than generic. Custom domains are required for high-volume sending.</p>
@@ -1870,7 +1868,6 @@
                     <span class="callout-text">DNS changes can take up to 48 hours to propagate across the internet, though they often take effect within a few hours. If verification fails immediately after adding the records, wait and try again later.</span>
                 </div>
 
-                <!-- Email Senders -->
                 <h3 class="section-subtitle" id="section-12-senders">Email Senders</h3>
 
                 <p class="section-text">An Email Sender is the "From" name and email address that recipients see when they receive your emails. You can create multiple senders — for example, different staff members, departments, or campaign identities — and choose the appropriate one when composing each email.</p>
@@ -1895,7 +1892,6 @@
 
                 <p class="section-text">Solidarity Tech integrates with Zoom in two distinct ways: for <strong>Virtual Events</strong> (where a Zoom account is connected to an event for automatic meeting creation and attendance tracking) and for <strong>Scheduled Calls</strong> (where individual Team Members connect their own Zoom accounts to receive supporter calls). The setup process is different for each use case.</p>
 
-                <!-- Zoom for Events -->
                 <h3 class="section-subtitle" id="section-13-events">Zoom for Virtual Events</h3>
 
                 <p class="section-text">When you create a virtual event in Solidarity Tech and connect it to Zoom, the platform automatically creates a Zoom meeting, generates personalized join links for each attendee, and tracks attendance automatically when people join — no manual check-in needed.</p>
@@ -1918,7 +1914,6 @@
                     <span class="callout-text">Attendance for virtual Zoom events is tracked automatically when attendees join. However, this only works when Zoom is connected via the integration — not when a plain URL is pasted in.</span>
                 </div>
 
-                <!-- Zoom for Scheduled Calls -->
                 <h3 class="section-subtitle" id="section-13-calls">Zoom for Scheduled Calls</h3>
 
                 <p class="section-text">Scheduled Calls is a feature that lets supporters book one-on-one calls with Team Members directly from a public page. When Zoom is enabled for Scheduled Calls, each booking automatically generates a unique Zoom meeting link that is sent to both the supporter and the Team Member.</p>
@@ -1971,19 +1966,9 @@
                     <span class="callout-text">Changes to Website Settings apply to all your public-facing pages at once. Review your changes in the preview before saving to avoid unexpected results on live pages.</span>
                 </div>
 
-                <!-- Navigation & Footer -->
                 <h3 class="section-subtitle" id="section-14-nav">Navigation Bar & Footer</h3>
 
                 <p class="section-text">The navigation bar appears at the top of every page on your site, and the footer appears at the bottom. Both are managed from Website Settings and display consistently across all your pages.</p>
-
-                <p class="section-text">In the Navigation & Footer settings you can:</p>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Add or remove navigation menu items and links</span></li>
-                    <li><input type="checkbox"> <span>Upload and configure your organization's logo</span></li>
-                    <li><input type="checkbox"> <span>Set your organization's display name</span></li>
-                    <li><input type="checkbox"> <span>Add social media profile links (they'll appear as icons in the footer)</span></li>
-                    <li><input type="checkbox"> <span>Add footer links and legal/compliance text</span></li>
-                </ul>
 
                 <h3 class="section-subtitle">How to Edit Your Navigation & Footer</h3>
                 <ol class="step-list">
@@ -1995,25 +1980,42 @@
                     <li>Click <strong>Save</strong> to apply your changes across all pages.</li>
                 </ol>
 
-                <!-- Custom Domain -->
-                <h3 class="section-subtitle" id="section-14-domain">Custom Domain</h3>
+                <h3 class="section-subtitle" id="section-14-domain">Custom Domain & Subdomain</h3>
 
-                <p class="section-text">By default, your Solidarity Tech website is accessible at a <strong>solidarity.tech subdomain</strong> (e.g., <code>yourorg.solidarity.tech</code>). You can connect your own custom domain (e.g., <code>www.yourorg.com</code>) so that all your pages are served from your own URL.</p>
+                <p class="section-text">By default, your Solidarity Tech website is accessible at a <strong>solidarity.tech subdomain</strong> (e.g., <code>yourorg.solidarity.tech</code>). You have two options depending on your situation: connect a <strong>custom domain</strong> if your organization doesn't already have a website, or connect a <strong>custom subdomain</strong> if you do.</p>
 
-                <h3 class="section-subtitle">How to Connect a Custom Domain</h3>
+                <div class="callout highlight">
+                    <span class="callout-text">Don't already have a website? Use a Custom Domain (e.g., <code>yourorg.com</code>). Already have a website at yourorg.com? Use a Custom Subdomain instead (e.g., <code>act.yourorg.com</code>) so your existing site is unaffected.</span>
+                </div>
+
+                <h3 class="section-subtitle">Option A: Connect a Custom Domain</h3>
+                <p class="section-text">Use this if your organization doesn't have an existing website and you want Solidarity Tech to be your primary web presence.</p>
                 <ol class="step-list">
                     <li>Go to <strong>Websites → Custom Domain</strong> in the dashboard.</li>
-                    <li>Enter the domain or subdomain you want to connect (e.g., <code>www.yourorg.com</code>).</li>
-                    <li>Solidarity Tech will display the DNS records you need to add — typically a CNAME record pointing to Solidarity Tech's servers.</li>
-                    <li>Log in to your domain registrar and add the DNS record provided.</li>
+                    <li>Enter the domain you want to connect (e.g., <code>www.yourorg.com</code>).</li>
+                    <li>Solidarity Tech will display the DNS records you need — typically a <strong>CNAME record</strong> pointing to Solidarity Tech's servers.</li>
+                    <li>Log in to your domain registrar (e.g., GoDaddy, Namecheap, Cloudflare) and add the DNS record provided.</li>
                     <li>Return to Solidarity Tech and click <strong>Verify</strong>. Once DNS has propagated, your custom domain will be live.</li>
                 </ol>
 
-                <div class="callout highlight">
-                    <span class="callout-text">DNS propagation can take up to 48 hours. Your solidarity.tech subdomain will continue to work even after your custom domain is set up, so there's no downtime during the transition.</span>
+                <h3 class="section-subtitle">Option B: Connect a Custom Subdomain</h3>
+                <p class="section-text">Use this if your organization already has an active website (e.g., <code>yourorg.com</code>) and you want your Solidarity Tech pages to live on a subdomain like <code>act.yourorg.com</code> or <code>join.yourorg.com</code>. This keeps your existing website completely untouched.</p>
+                <ol class="step-list">
+                    <li>Decide on your subdomain prefix — common choices are <code>act</code>, <code>join</code>, <code>get-involved</code>, or <code>solidarity</code>.</li>
+                    <li>Go to <strong>Websites → Custom Domain</strong> in the dashboard and enter your full subdomain (e.g., <code>act.yourorg.com</code>).</li>
+                    <li>Solidarity Tech will provide a <strong>CNAME record</strong> to add to your DNS. The host/name field will be just your subdomain prefix (e.g., <code>act</code>) and the value will point to Solidarity Tech's servers.</li>
+                    <li>Log in to your domain registrar and add the CNAME record — <strong>do not touch any existing records</strong> for your root domain.</li>
+                    <li>Return to Solidarity Tech and click <strong>Verify</strong>.</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">When adding a CNAME for a subdomain, only edit the record for that specific prefix. Leave all other DNS records alone — modifying the wrong record could take down your existing website.</span>
                 </div>
 
-                <!-- Announcement Banner, Shortlinks, Push Notifications -->
+                <div class="callout important">
+                    <span class="callout-text">DNS propagation can take up to 48 hours for either option. Your solidarity.tech subdomain will keep working in the meantime, so there's no downtime during the transition.</span>
+                </div>
+
                 <h3 class="section-subtitle" id="section-14-other">Announcement Banner, Shortlinks & Push Notifications</h3>
 
                 <p class="section-text"><strong>Announcement Banner:</strong> Display a prominent banner at the top of all your website pages. Useful for active campaigns, urgent announcements, or driving supporters to a specific action. You can set the banner text and optionally include a call-to-action link. The banner can be toggled on or off without deleting it.</p>
