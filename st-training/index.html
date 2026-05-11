@@ -741,6 +741,20 @@
             </div>
 
             <div class="sidebar-section">
+                <div class="sidebar-title">Contacting Volunteers</div>
+                <a class="nav-item" data-section="section-15">Sending an Email Blast</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-create">Create a New Email</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-recipients">Choosing Recipients</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-from">Add From (Sender &amp; Reply-To)</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-subject">Add Subject &amp; A/B Testing</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-content">Content &amp; Edit Design</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-tests">Sending a Test Email</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-drafts">Drafts & Scheduling</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-results">Tracking & Results</a>
+                <a class="nav-sub-item" data-section="section-15" data-anchor="section-15-bounces">Bounces & Deliverability</a>
+            </div>
+
+            <div class="sidebar-section">
                 <div class="sidebar-title">Settings & Integrations</div>
                 <a class="nav-item" data-section="section-12">Email Wrappers & Domain Setup</a>
                 <a class="nav-sub-item" data-section="section-12" data-anchor="section-12-wrappers">Email Wrappers</a>
@@ -1048,22 +1062,19 @@
                 </div>
 
                 <div class="section-subtitle" style="font-size: 1.15rem;">Step 4: Select Event Type</div>
-                <p class="section-text">Choose between two event types:</p>
+                <p class="section-text">Choose between three event types:</p>
                 <ul class="step-list">
-                    <li><strong>In-Person:</strong> Physical location with address</li>
-                    <li><strong>Virtual:</strong> Online event with meeting link or Zoom account</li>
+                    <li><strong>In-Person:</strong> Physical event with a real physical address</li>
+                    <li><strong>Virtual:</strong> Digital event with a web address (meeting link or Zoom account)</li>
+                    <li><strong>Hybrid:</strong> Physical event with a virtual option — both an address and a meeting link</li>
                 </ul>
                 <div class="image-container">
-                    <img src="media/image14.png" alt="Event Type Selection">
+                    <img src="media/image14.png" alt="Event Type Selection — In-Person, Virtual, or Hybrid">
                     <div class="image-caption">Figure 13: Choosing Event Type</div>
                 </div>
 
                 <div class="callout important">
-                    <span class="callout-text">You cannot change an event's type after creation. Choose carefully between In-Person and Virtual.</span>
-                </div>
-
-                <div class="callout tip">
-                    <span class="callout-text">For hybrid events (both in-person and online), create the event as In-Person and include the virtual meeting link in your event description, emails, and text messages. Solidarity Tech is working on a hybrid event type option but for now this is the best way to handle Hybrid events.</span>
+                    <span class="callout-text">You cannot change an event's type after creation. Choose carefully between In-Person, Virtual, and Hybrid.</span>
                 </div>
 
                 <div class="section-subtitle" style="font-size: 1.15rem;">Step 5: Set the Location</div>
@@ -1071,6 +1082,7 @@
                 <ul class="step-list">
                     <li><strong>In-Person:</strong> Enter the full address. Solidarity Tech will auto-complete the address as you type.</li>
                     <li><strong>Virtual:</strong> Select Zoom account (if available) or paste a meeting link</li>
+                    <li><strong>Hybrid:</strong> Enter the physical address <em>and</em> the virtual meeting link or Zoom account — attendees can choose how they want to participate.</li>
                 </ul>
                 <div class="image-container">
                     <img src="media/image15.png" alt="In-Person Location">
@@ -1664,7 +1676,414 @@
                 </div>
             </section>
 
-            
+            <!-- Section 15: Contacting Volunteers - Sending an Email Blast -->
+            <section id="section-15" class="section">
+                <h2 class="section-title">Contacting Volunteers: Sending an Email Blast</h2>
+
+                <p class="section-text">Once you have volunteers in your system, Solidarity Tech makes it easy to reach out to them at scale. The <strong>Email Blast</strong> tool lets you compose a message, target the right audience using lists or filters, send a test, schedule it for the perfect time, and then track how it performed after it goes out.</p>
+
+                <div class="callout important">
+                    <span class="callout-text">Before you can send an email blast, your organization must have at least one <strong>Email Wrapper</strong> and one <strong>Email Sender</strong> configured. See <em>Email Wrappers & Domain Setup</em> for the one-time setup steps.</span>
+                </div>
+
+                <h3 class="section-subtitle">What You'll Need Before Sending</h3>
+                <ul class="step-list">
+                    <li>An Email Wrapper</li>
+                    <li>A verified Email Sender (the "From" email address)</li>
+                    <li>A list, filter, or saved segment of who you want to reach</li>
+                    <li>Admin permissions to actually send (Organizers can draft but not send)</li>
+                </ul>
+
+                <!-- Create a New Email Blast -->
+                <h3 class="section-subtitle" id="section-15-create">Create a New Email Blast</h3>
+                <p class="section-text">All email blasts live in the <strong>Email → Email Blasts</strong> section of the dashboard. The page is organized into two tabs:</p>
+                <ul class="step-list">
+                    <li><strong>Active &amp; Scheduled Email Blasts:</strong> Drafts you're still working on and emails queued to send at a future time.</li>
+                    <li><strong>Sent Email Blasts:</strong> Everything that has already gone out — click any row to see its performance report.</li>
+                </ul>
+                <div class="image-container">
+                    <img src="media/image46.png" alt="Email Blasts dashboard with Active &amp; Scheduled and Sent tabs">
+                    <div class="image-caption">Figure 43: The Email Blasts dashboard</div>
+                </div>
+
+                <p class="section-text">To start a new blast:</p>
+                <ol class="step-list">
+                    <li>Click <strong>Email</strong> in the left sidebar, then <strong>Email Blasts</strong>.</li>
+                    <li>Click the <strong>Create New Email Blast</strong> button in the top right.</li>
+                    <li>Give your blast an internal name (e.g., "May Newsletter — Volunteers" or "Phone Bank Recruitment 5/14"). This is for your team's reference and is not visible to recipients.</li>
+                    <li>Click <strong>Create New Blast</strong> to open the email editor. You'll choose your Email Sender and Email Wrapper inside the editor in the next steps.</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">Use a consistent naming convention for internal blast names — for example, "[Date] — [Audience] — [Topic]". It makes the Active &amp; Scheduled and Sent tabs much easier to scan later.</span>
+                </div>
+
+                <p class="section-text">After clicking <strong>Create New Blast</strong>, you'll land on the email blast editor — a single page that walks you through everything from picking your sender and wrapper, to adding recipients, composing the message, sending tests, and finally sending or scheduling.</p>
+
+                <div class="image-container">
+                    <img src="media/image47.png" alt="Email blast editor screen with all configuration sections">
+                    <div class="image-caption">Figure 44: The email blast editor</div>
+                </div>
+
+                <!-- Choosing Recipients -->
+                <h3 class="section-subtitle" id="section-15-recipients">Choosing Recipients</h3>
+                <p class="section-text">The <strong>Add Recipients</strong> section is where you decide who actually receives the email. Solidarity Tech gives you several ways to target the right people, each with its own button on the side of the page.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipient Source</th>
+                            <th>What It Is</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Saved List</strong></td>
+                            <td>A previously saved group of contacts</td>
+                            <td>Recurring sends to the same audience (e.g., "Active Volunteers")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Filter</strong></td>
+                            <td>An on-the-fly query (zip, assessment, RSVP status, etc.)</td>
+                            <td>One-off targeting — anyone in Broward who attended an event in the last 30 days</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Event Attendees / RSVPs</strong></td>
+                            <td>Everyone tied to a specific event or session</td>
+                            <td>Reminders, thank-yous, or follow-ups for a single event</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manual Selection</strong></td>
+                            <td>Hand-picked individual contacts</td>
+                            <td>Small, specific groups (e.g., team leads only)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="section-text">To choose your audience:</p>
+                <ol class="step-list">
+                    <li>Scroll to the <strong>Add Recipients</strong> section inside the email editor.</li>
+                    <li>Click the source button on the side of the page that matches what you want — List, Filter, Event, or individual contacts.</li>
+                    <li>Build or select your filter — see the <em>People: Searching & Filtering</em> section for filter syntax.</li>
+                    <li>Review the <strong>estimated recipient count</strong> shown at the top of the page. This is your sanity check — if the number looks off, your filter probably is too.</li>
+                </ol>
+
+                <div class="callout important">
+                    <span class="callout-text">Solidarity Tech automatically excludes contacts who have unsubscribed, hard-bounced, or marked previous emails as spam — you don't need to filter them out manually. The recipient count you see is the actual deliverable count.</span>
+                </div>
+
+                <!-- Add From -->
+                <h3 class="section-subtitle" id="section-15-from">Add From</h3>
+                <p class="section-text">The <strong>Add From</strong> section is where you set the "From" identity recipients see in their inbox, plus where any replies should go.</p>
+                <ol class="step-list">
+                    <li>Choose an <strong>Email Sender</strong> from the dropdown. This is the verified sender (name + address) that appears in the recipient's inbox. If your sender isn't listed, set one up in <em>Settings → Email Senders</em> first.</li>
+                    <li>Optionally add a <strong>Reply-To</strong> email address. When a recipient hits "Reply," their message goes here instead of the sender's address. Useful when your sender is a no-reply or shared address but you still want replies to reach a real inbox (e.g., your DEC email).</li>
+                </ol>
+
+                <div class="callout tip">
+                    <span class="callout-text">Pick a Reply-To address that someone actually monitors. If supporters reply and no one answers, you'll lose engagement — and possibly hurt your future deliverability.</span>
+                </div>
+
+                <div class="callout important">
+                    <span class="callout-text">Replies are handled <strong>outside</strong> the Solidarity Tech platform. Whatever inbox you point Reply-To at is where the conversation continues — Solidarity Tech does not have a built-in inbox for incoming replies.</span>
+                </div>
+
+                <!-- Add Subject -->
+                <h3 class="section-subtitle" id="section-15-subject">Add Subject</h3>
+                <p class="section-text">The <strong>Add Subject</strong> section is where you write the subject line that recipients see in their inbox. Keep it under ~50 characters so it isn't truncated on mobile, and lead with the most important word.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">A/B Testing Your Subject Line</div>
+                <p class="section-text">Solidarity Tech includes a built-in <strong>A/B Test</strong> option for subject lines. Instead of guessing which subject will perform best, you can let the data decide.</p>
+                <ol class="step-list">
+                    <li>In the Add Subject section, click the <strong>A/B Test Variations</strong> button to open the variation builder.</li>
+                    <li>Enter your starting subject line in the <strong>Starting Subject Line</strong> section — this is the baseline the variations will be compared against.</li>
+                    <li>To generate variations with AI, set the number of variations you want (the default is <strong>3</strong>, but the number is editable) and click <strong>Generate</strong>. Solidarity Tech will draft variations off your starting subject line.</li>
+                    <li>To write your own instead, click the <strong>or manually add a variation</strong> link and type each variation in by hand.</li>
+                    <li>Review and edit any of the generated or manual variations until you're happy with the lineup.</li>
+                </ol>
+
+                <div class="image-container">
+                    <img src="media/image48.png" alt="A/B Test Variations panel with starting subject line and Generate button">
+                    <div class="image-caption">Figure 45: The A/B Test Variations builder</div>
+                </div>
+
+                <div class="callout tip">
+                    <span class="callout-text">When using AI to generate variations, make them meaningfully different — one urgency-driven, one curiosity-driven, one personalized — not just minor word swaps. Variations that all sound alike won't tell you anything useful.</span>
+                </div>
+
+                <div class="callout important">
+                    <span class="callout-text">A/B tests only produce useful results with a large enough sample. For small lists (under a few thousand), pick the one subject you believe in rather than splitting your audience across variations.</span>
+                </div>
+
+                <!-- Content -->
+                <h3 class="section-subtitle" id="section-15-content">Content</h3>
+                <p class="section-text">The <strong>Content</strong> section is where you write the actual email. Click <strong>Edit Design</strong> to open the editor — a split-screen view with the writing area on the left and a live preview on the right.</p>
+
+                <div class="image-container">
+                    <img src="media/image49.png" alt="Content editor with formatting toolbar, writing area, wrapper dropdown, and live preview">
+                    <div class="image-caption">Figure 46: The Content editor</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">The Editor (left side)</div>
+                <p class="section-text">The editor works like a familiar rich-text editor (think Word or Google Docs) — you type and format text directly, with toolbars for everything you need to insert.</p>
+
+                <p class="section-text">Top toolbar — <strong>insert</strong> elements:</p>
+                <ul class="step-list">
+                    <li><strong>&lt;/&gt;</strong> — switch to raw HTML view if you need to paste or hand-edit code</li>
+                    <li><strong>Merge Tags</strong> — drop in personalization tokens like first name, last name, etc., so each recipient sees their own info</li>
+                    <li><strong>Emoji</strong> — pick from an emoji picker</li>
+                    <li><strong>Link</strong> — turn selected text into a hyperlink</li>
+                    <li><strong>Image</strong> — upload or insert an image</li>
+                    <li><strong>Attachment</strong> — attach a file to the email</li>
+                    <li><strong>Line</strong> — insert a horizontal divider line</li>
+                    <li><strong>Button</strong> — insert a styled call-to-action button</li>
+                </ul>
+
+                <p class="section-text">Second toolbar — <strong>format</strong> text:</p>
+                <ul class="step-list">
+                    <li>Paragraph style, alignment, and multi-column layout</li>
+                    <li>Bulleted and numbered lists</li>
+                    <li>Text color and highlight color</li>
+                    <li>Font family (e.g., Open Sans) and font size</li>
+                </ul>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Language Tabs</div>
+                <p class="section-text">If your organization sends in multiple languages, additional tabs (next to <strong>English</strong>) let you author a translated version of the same email. Recipients receive whichever language matches their profile.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Email Wrapper</div>
+                <p class="section-text">At the bottom of the editor is the <strong>Email Wrapper</strong> dropdown (e.g., "FDP Default"). The wrapper provides the logo, footer, and other information that frame your message — all of which you can adjust in <em>Settings → Email Wrappers</em>. You can see the wrapper applied in the live preview on the right.</p>
+                <p class="section-text">If your organization has multiple wrappers (newsletter vs. action alert, for example), pick the one that fits this blast.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Live Preview (right side)</div>
+                <p class="section-text">The right side shows a live preview of how the email will look once it's wrapped. Use the <strong>Desktop / Mobile</strong> toggle in the top right to check both layouts — most supporters read on mobile, so the mobile view matters most.</p>
+                <p class="section-text">Click <strong>Save &amp; Refresh Preview</strong> at any point to update the preview without leaving the editor.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Saving Your Work</div>
+                <p class="section-text">When you're finished:</p>
+                <ul class="step-list">
+                    <li><strong>Save &amp; Refresh Preview</strong> — saves your changes and refreshes the live preview, but keeps you in the editor</li>
+                    <li><strong>Save &amp; Continue</strong> — saves and returns you to the main blast page</li>
+                    <li><strong>Cancel</strong> — discards changes since the last save and returns to the blast page</li>
+                </ul>
+
+                <div class="callout important">
+                    <span class="callout-text">Always check the Mobile preview before sending. A layout that looks great on desktop can break on mobile — especially long buttons, side-by-side columns, and large images.</span>
+                </div>
+
+                <!-- Sending a Test Email -->
+                <h3 class="section-subtitle" id="section-15-tests">Sending a Test Email</h3>
+                <p class="section-text">Always send a test before sending the real thing. Tests render the email exactly as recipients will see it — wrapper, sender, merge tags, and all.</p>
+                <p class="section-text">The Send Test option lives in the <strong>Content</strong> section on the main blast page, and only becomes available once the rest of the blast (Recipients, From, Subject, and Content) is set up.</p>
+                <ol class="step-list">
+                    <li>Back on the main blast page, scroll to the <strong>Content</strong> section.</li>
+                    <li>Click <strong>Send Test</strong>.</li>
+                    <li>Enter one or more email addresses (your own, plus a teammate or two).</li>
+                    <li>Send the test, then open it in your inbox and check it on both desktop <strong>and mobile</strong>.</li>
+                </ol>
+
+                <p class="section-text">Things to look for in your test:</p>
+                <ul class="step-list">
+                    <li>Subject line appears correctly</li>
+                    <li>From name/address looks right</li>
+                    <li>Images load (no broken image icons)</li>
+                    <li>Buttons and links go to the correct URLs</li>
+                    <li>Merge tags render in roughly the right places</li>
+                    <li>Email isn't going to spam — if your test lands in spam, your real send probably will too</li>
+                </ul>
+
+                <div class="callout important">
+                    <span class="callout-text">Test messages use <strong>[Contact Name]</strong> as a placeholder for the contact's name. Other merge tags will use a matching contact's real data if one is found in your system. So don't worry if your test shows "Hi [Contact Name]," instead of your actual name — that's expected behavior.</span>
+                </div>
+
+                <div class="callout highlight">
+                    <span class="callout-text">Tests don't count against your recipient list and don't trigger any automations. Send as many as you need.</span>
+                </div>
+
+                <!-- Drafts & Scheduling -->
+                <h3 class="section-subtitle" id="section-15-drafts">Drafts & Scheduling</h3>
+                <p class="section-text">You don't have to finish an email in one sitting, and you don't have to send it the moment it's done.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Drafts</div>
+                <p class="section-text">There's no Save Draft button — Solidarity Tech autosaves your work as you go. Any blast you haven't sent or scheduled yet will appear under the <strong>Active &amp; Scheduled Email Blasts</strong> tab with a "Draft" status. To resume, just click the blast name from that tab and pick up where you left off.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Scheduling for Later</div>
+                <p class="section-text">For most volunteer audiences, the best send times are weekday mornings (8–10 a.m. local time) and early evenings (5–7 p.m.). Use scheduling so you don't have to remember to hit Send at exactly the right moment.</p>
+                <ol class="step-list">
+                    <li>From the email editor, click <strong>Schedule</strong> instead of Send.</li>
+                    <li>Choose a date and time. The time is in your dashboard's time zone — double-check before confirming.</li>
+                    <li>Confirm. The blast will appear under the <strong>Active &amp; Scheduled Email Blasts</strong> tab with a "Scheduled" status and the send time displayed.</li>
+                    <li>To change or cancel a scheduled blast, open it from the Active &amp; Scheduled tab and click <strong>Reschedule</strong> or <strong>Cancel Schedule</strong> any time before the send time.</li>
+                </ol>
+
+                <div class="callout important">
+                    <span class="callout-text">Once an email starts sending, it cannot be paused or recalled. Always send a test and review your recipient count <em>before</em> scheduling.</span>
+                </div>
+
+                <!-- Tracking & Results -->
+                <h3 class="section-subtitle" id="section-15-results">Tracking & Reviewing Results</h3>
+                <p class="section-text">After an email sends, Solidarity Tech tracks performance automatically. Open any blast from the <strong>Sent Email Blasts</strong> tab to see its report.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>What It Means</th>
+                            <th>Healthy Range*</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Delivered</strong></td>
+                            <td>Emails that successfully reached an inbox</td>
+                            <td>95%+ of sent</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Open Rate</strong></td>
+                            <td>% of delivered emails that were opened</td>
+                            <td>20–40% for volunteer lists</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Click Rate</strong></td>
+                            <td>% of delivered emails where someone clicked a link</td>
+                            <td>2–5%+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bounces</strong></td>
+                            <td>Emails that couldn't be delivered (bad address, full inbox)</td>
+                            <td>Under 2%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Unsubscribes</strong></td>
+                            <td>Recipients who opted out via the email</td>
+                            <td>Under 0.5%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spam Reports</strong></td>
+                            <td>Recipients who marked the email as spam</td>
+                            <td>Under 0.1% — anything higher is a deliverability red flag</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="section-text" style="font-size: 0.9rem; color: #666;"><em>*Benchmarks vary by audience. Compare each send to your own organization's averages over time.</em></p>
+
+                <div class="image-container">
+                    <img src="media/image50.png" alt="Email blast stats showing delivery, open, click, bounce, unsubscribe, and spam rates">
+                    <div class="image-caption">Figure 47: Email blast performance report</div>
+                </div>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Drilling Into Results</div>
+                <p class="section-text">From the report page, you can:</p>
+                <ul class="step-list">
+                    <li>Click <strong>Opens</strong>, <strong>Clicks</strong>, or <strong>Bounces</strong> to see exactly which contacts took each action</li>
+                    <li>See a per-link breakdown of which call-to-action got the most clicks</li>
+                    <li>Save any of those groups as a new List (e.g., "Clicked May newsletter") to use as the audience for a follow-up email</li>
+                    <li>Export the full results to CSV for deeper analysis</li>
+                </ul>
+
+                <div class="callout tip">
+                    <span class="callout-text">A great follow-up tactic: 3–5 days after a send, email everyone who <em>opened but didn't click</em> with a shorter, more focused version of the same ask. They're already engaged — they just need a clearer CTA.</span>
+                </div>
+
+                <!-- Bounces & Deliverability -->
+                <h3 class="section-subtitle" id="section-15-bounces">Bounces &amp; Deliverability</h3>
+                <p class="section-text">Solidarity Tech automatically monitors email bounces to protect your sender reputation and keep your contact data clean. You don't have to do anything to enable this — it just runs in the background. But it's worth understanding what's happening so you know what to expect on a contact's profile.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">How Bounces Are Handled</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bounce Type</th>
+                            <th>What Happens</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Permanent bounce</strong><br><em>(invalid address, no mailbox)</em></td>
+                            <td>The email is immediately removed from the profile and moved to "Other Emails." An activity is logged.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Transient bounce</strong><br><em>(mailbox full, temporary issue)</em></td>
+                            <td>The email is retained, but if 3 consecutive emails bounce, it's removed.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Suppression list</strong></td>
+                            <td>If 2 consecutive emails hit the suppression list, the email is removed.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">What You'll See on a Profile</div>
+                <p class="section-text">When an email bounces, an activity entry is added to the contact's profile. You may see:</p>
+                <ul class="step-list">
+                    <li><strong>Email bounced (permanent)</strong> — the address was invalid</li>
+                    <li><strong>Email bounced (transient)</strong> — temporary delivery issue</li>
+                    <li><strong>Reset email to blank following bounces</strong> — the email was removed after repeated failures</li>
+                </ul>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Typo Correction</div>
+                <p class="section-text">Before removing a bounced email, the system tries to auto-correct common typos (for example, <code>gmial.com</code> → <code>gmail.com</code>). If a correction is found, the email is updated instead of removed.</p>
+
+                <div class="section-subtitle" style="font-size: 1.15rem;">Spam Complaints</div>
+                <p class="section-text">If someone marks one of your emails as spam, their email permission is automatically revoked so future blasts don't go to that address. This protects your domain's deliverability for everyone else on your list.</p>
+
+                <div class="callout tip">
+                    <span class="callout-text">Maintaining deliverability: Solidarity Tech's bounce handling protects your sending reputation by automatically removing invalid addresses before they cause problems with email providers. The cleaner your list, the better your real recipients' inboxes will treat your future sends.</span>
+                </div>
+
+                <h3 class="section-subtitle">Quick Reference: Email Blast Workflow</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>What You Do</th>
+                            <th>Where</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Create new blast and name it</td>
+                            <td>Email → Email Blasts → Create New Email Blast</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Choose recipients (list, filter, or event)</td>
+                            <td>Add Recipients section</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Set sender and (optional) Reply-To</td>
+                            <td>Add From section</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Write subject (and optionally A/B test it)</td>
+                            <td>Add Subject section</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Build the email body</td>
+                            <td>Content section → Edit Design</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Send a test to yourself + a teammate</td>
+                            <td>Send Test button</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Send now or schedule for later</td>
+                            <td>Send / Schedule button</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Review report after delivery</td>
+                            <td>Email Blasts → Sent Email Blasts tab</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
             <!-- Section 11: Troubleshooting & Common Questions -->
             <section id="section-11" class="section">
@@ -1734,11 +2153,11 @@
 
                 <button class="collapsible-header" onclick="toggleCollapsible(this)">
                     <span class="toggle-icon">▼</span>
-                    <span>I created an In-Person event but need it to be Virtual (or vice versa)</span>
+                    <span>I picked the wrong event type (In-Person, Virtual, or Hybrid)</span>
                 </button>
                 <div class="collapsible-content">
                     <p style="margin-top: 1rem;"><strong>Problem:</strong> Event types cannot be changed after creation.</p>
-                    <p style="margin-top: 1rem;"><strong>Solution:</strong> For hybrid events, create the event as In-Person and include the virtual meeting link in your event description, emails, and SMS messages to attendees. Alternatively, delete the event and create a new one with the correct type (note: this will cancel any RSVPs).</p>
+                    <p style="margin-top: 1rem;"><strong>Solution:</strong> If your event needs both a physical address and a meeting link, switch to the <strong>Hybrid</strong> event type when you create it. If you've already created the event with the wrong type, you'll need to delete it and create a new one with the correct type (note: this will cancel any existing RSVPs, so reach out to RSVPed attendees first).</p>
                 </div>
 
                 <button class="collapsible-header" onclick="toggleCollapsible(this)">
