@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="vendor/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="data/fl-districts.js" as="script">
 <style>
 html,body{margin:0}
 :root{
@@ -184,7 +185,8 @@ function inside(f,x,y){
 function hit(l,lat,lng){ return feats[l].find(f=>inside(f,lng,lat)); }
 
 // ---- map
-const map = L.map("map",{preferCanvas:true,zoomSnap:.25,minZoom:5.5,maxZoom:17});
+const FL_BOUNDS = L.latLngBounds([[24.2,-87.9],[31.2,-79.7]]);
+const map = L.map("map",{preferCanvas:true,zoomSnap:.25,maxZoom:17,maxBounds:FL_BOUNDS.pad(0.35),maxBoundsViscosity:1});
 map.attributionControl.setPrefix(false);
 const darkQ = matchMedia("(prefers-color-scheme: dark)");
 map.createPane("ref"); map.getPane("ref").style.zIndex=450; map.getPane("ref").style.pointerEvents="none";
@@ -197,18 +199,19 @@ function setTiles(){
   if (tiles && tiles._style===style) return;
   if (tiles) map.removeLayer(tiles);
   if (useOSM){
-    tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:OSM_ATTR,opacity:.75});
+    tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:OSM_ATTR,opacity:.75,bounds:FL_BOUNDS.pad(0.1)});
   } else {
-    const base = L.tileLayer(`${ESRI}World_${style}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,attribution:ESRI_ATTR});
-    const ref = L.tileLayer(`${ESRI}World_${style}_Gray_Reference/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,pane:"ref"});
+    const base = L.tileLayer(`${ESRI}World_${style}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,attribution:ESRI_ATTR,bounds:FL_BOUNDS.pad(0.1)});
+    const ref = L.tileLayer(`${ESRI}World_${style}_Gray_Reference/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,pane:"ref",bounds:FL_BOUNDS.pad(0.05)});
     let errs = 0;
     base.on("tileerror",()=>{ if(++errs===4 && !useOSM){ useOSM=true; setTiles(); } });
     tiles = L.layerGroup([base,ref]);
   }
   tiles._style = style; tiles.addTo(map);
 }
+map.fitBounds(FL_BOUNDS,{padding:[10,10]});
+map.setMinZoom(Math.max(5, map.getZoom()-0.5));
 setTiles();
-map.fitBounds([[24.4,-87.7],[31.05,-79.9]],{padding:[10,10]});
 const groups={}, labels={};
 for (const l of LAYERS){
   groups[l]=L.geoJSON({type:"FeatureCollection",features:feats[l]},{interactive:false});

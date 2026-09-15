@@ -28,8 +28,8 @@ To embed it on another site, use an iframe:
 | Layer | Source | Notes |
 |---|---|---|
 | Congressional districts | 2026 enacted plan (HB 1-D) block assignment file | Built by merging 2020 Census blocks by district, then clipped to the shoreline |
-| State Senate and State House | U.S. Census Bureau cartographic boundaries, 2023 (`cb_2023_12_sldu_500k`, `cb_2023_12_sldl_500k`) | 2022 plans |
-| Counties | 2020 Census blocks merged by county, clipped to the same shoreline | |
+| State Senate and State House | 2022 plans. Districts come from U.S. Census Bureau 2023 boundaries (`cb_2023_12_sldu_500k`, `cb_2023_12_sldl_500k`), assigned to 2020 blocks, then rebuilt from those blocks | Rebuilding from blocks lets all four layers share exactly the same edges |
+| Counties | 2020 Census blocks merged by county | All layers are clipped to the same shoreline |
 | Population and overlaps | 2020 Census block population (`POP20`) | Each block is assigned to districts by an interior point |
 
 Overlap percentages are *share of the selected district's residents*. Overlaps smaller than about 0.2% of a district, or under 100 people, are hidden. These are usually artifacts of the simplified boundary lines, not real overlaps.
