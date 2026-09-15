@@ -7,7 +7,7 @@
 <meta name="description" content="See where Florida's congressional, state senate, state house and county lines overlap. Search an address or district.">
 <meta property="og:title" content="Florida District Overlap Map">
 <meta property="og:description" content="See where Florida's congressional, state senate, state house and county lines overlap.">
-<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono&display=swap" media="print" onload="this.media='all'">
@@ -15,6 +15,8 @@
 <style>
 html,body{margin:0}
 :root{
+  --d1:#86b6ef; --d2:#3987e5; --d3:#1c5cab; --r1:#f2a8a4; --r2:#e34948; --r3:#a8302f; --mid:#f0efec;
+  --y1:#9fdcc4; --y2:#1baf7a; --y3:#0d7a53; --n1:#f5b49a; --n2:#eb6834; --n3:#b44a1d; --shade-op:.55;
   --water:#d6e2e6; --land:#f3f2ec; --ink:#1d2528; --ink-2:#56626a; --ink-3:#86919a;
   --panel:#fbfbf8; --line:#dde0dc; --hover:#eef0eb; --chip:#e8ebe6;
   --cd:#2450a0; --sd:#138a6e; --hd:#c4621a; --county:#6d7680;
@@ -28,12 +30,16 @@ html,body{margin:0}
     --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
     --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
     --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+    --d1:#184f95; --d2:#2a78d6; --d3:#6da7ec; --r1:#7a2524; --r2:#c83d3c; --r3:#e66767; --mid:#383835;
+    --y1:#0f5e42; --y2:#199e70; --y3:#5fd0a4; --n1:#7d3413; --n2:#d95926; --n3:#f08a5d; --shade-op:.6;
   }
 }
 :root[data-theme="dark"]{
   --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
   --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
   --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+  --d1:#184f95; --d2:#2a78d6; --d3:#6da7ec; --r1:#7a2524; --r2:#c83d3c; --r3:#e66767; --mid:#383835;
+  --y1:#0f5e42; --y2:#199e70; --y3:#5fd0a4; --n1:#7d3413; --n2:#d95926; --n3:#f08a5d; --shade-op:.6;
 }
 html,body{height:100%}
 body{background:var(--panel);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.45}
@@ -81,19 +87,31 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
 .ovr .bar i{display:block;height:100%;background:var(--c)}
 .ovr .pct{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
 .ovr .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shade{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.shade select{font:inherit;font-size:13px;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--land);color:var(--ink);min-width:0}
+.shade select:focus-visible{outline:2px solid var(--focus);outline-offset:-1px}
+.legend{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;border-radius:2px;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.res{display:grid;gap:10px}
+.race{display:grid;gap:4px}
+.race .top{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.race .top b{font-weight:600}
+.race .mg{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.split{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--chip);gap:2px}
+.split i{display:block;height:100%}
+.race .sub2{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tick{position:relative}
+.tick::after{content:"";position:absolute;left:60%;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+.maptip{position:absolute;pointer-events:none;z-index:5;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.15);white-space:nowrap}
+.maptip b{font-weight:600}
 .foot{padding:10px 20px 12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.4}
-#map{height:100%;background:var(--water)}
-.leaflet-container{background:var(--water);font-family:var(--f-ui)}
-.lbl{font-family:var(--f-cond);font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);display:inline-block;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 2px var(--land)}
-.lbl.cd{color:var(--cd);font-size:15px}
-.lbl.sd{color:var(--sd);font-size:13px}
-.lbl.hd{color:var(--hd);font-size:12px}
-.lbl.county{color:var(--county);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+#map{height:100%;background:var(--water);position:relative}
 .addr{margin:0 0 8px;font-weight:600;font-size:14px;line-height:1.35}
-.leaflet-control-attribution{font-size:10.5px;background:color-mix(in srgb,var(--panel) 85%,transparent)!important;color:var(--ink-3)}
-.leaflet-control-attribution a{color:var(--ink-2)}
-.pin{width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid var(--land);box-shadow:0 1px 4px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
-.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+.pin{width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid var(--land);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.maplibregl-ctrl-group{background:var(--panel)}
+.maplibregl-ctrl-group button+button{border-top-color:var(--line)}
+.maplibregl-ctrl-attrib{font-size:10.5px}
 @media (max-width:760px){
   .app{grid-template-columns:1fr;grid-template-rows:52% 48%}
   .panel{order:2;border-right:0;border-top:1px solid var(--line)}
@@ -124,23 +142,51 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
         <label class="layer" style="--c:var(--hd)"><input type="checkbox" id="lyr-hd" data-l="hd"><span class="sw"></span>House<span class="n">120</span></label>
         <label class="layer county" style="--c:var(--county)"><input type="checkbox" id="lyr-county" data-l="county" checked><span class="sw"></span>County<span class="n">67</span></label>
       </div>
+      <div class="shade">
+        <select id="shade-by" aria-label="Shade the map by">
+          <option value="">Shade map: none</option>
+          <option value="pres">2024 President margin</option>
+          <option value="uss">2024 U.S. Senate margin</option>
+          <option value="a4">Amendment 4 (abortion) — Yes %</option>
+          <option value="a3">Amendment 3 (marijuana) — Yes %</option>
+        </select>
+        <select id="shade-layer" aria-label="Districts to shade">
+          <option value="cd">Congress</option><option value="sd">Senate</option><option value="hd">House</option><option value="county">County</option>
+        </select>
+        <div class="legend" id="legend" hidden></div>
+      </div>
       <div class="search">
         <input id="q" type="search" placeholder="Address, district or county — e.g. HD 65, Broward" autocomplete="off" aria-label="Search an address, district or county" aria-controls="sugg">
         <ul class="sugg" id="sugg" role="listbox" hidden></ul>
       </div>
     </div>
     <div class="body" id="out"></div>
-    <div class="foot">Congress: 2026 map (HB 1-D), built from census block assignments. Legislature: 2022 plans. Population and overlap shares use 2020 Census blocks.</div>
+    <div class="foot">Congress: 2026 map (HB 1-D). Legislature: 2022 plans. Population: 2020 Census. 2024 results: Redistricting Data Hub, allocated to blocks and totaled within today's lines.</div>
   </aside>
   <div id="map"></div>
 </div>
 
 <script src="data/fl-districts.js"></script>
-<script src="vendor/leaflet.js"></script>
+<script src="vendor/maplibre-gl.js"></script>
 <script src="vendor/topojson-client.min.js"></script>
 <script>
 (function(){
 const D = window.FLD;
+// E[layer][id] = [adults, presTotal, trump, harris, scott, mucarselPowell, a3yes, a3no, a4yes, a4no]
+const E = D.ex;
+const pct = (a,b) => b ? a/b*100 : 0;
+const METRIC = {
+  pres:{label:"2024 President margin", kind:"margin", f:e=>pct(e[3]-e[2], e[2]+e[3])},
+  uss:{label:"2024 U.S. Senate margin", kind:"margin", f:e=>pct(e[5]-e[4], e[4]+e[5])},
+  a4:{label:"Amendment 4 Yes %", kind:"yes", f:e=>pct(e[8], e[8]+e[9])},
+  a3:{label:"Amendment 3 Yes %", kind:"yes", f:e=>pct(e[6], e[6]+e[7])}
+};
+// margin: D minus R, two-party
+const MARGIN_BINS = [[-Infinity,-30,"--r3","R+30 or more"],[-30,-15,"--r2","R+15–30"],[-15,-5,"--r1","R+5–15"],[-5,5,"--mid","Within 5"],[5,15,"--d1","D+5–15"],[15,30,"--d2","D+15–30"],[30,Infinity,"--d3","D+30 or more"]];
+const YES_BINS = [[-Infinity,50,"--n3","Under 50%"],[50,55,"--n2","50–55%"],[55,60,"--n1","55–60%"],[60,65,"--y1","60–65%"],[65,70,"--y2","65–70%"],[70,Infinity,"--y3","70% or more"]];
+const binsFor = m => METRIC[m].kind==="margin" ? MARGIN_BINS : YES_BINS;
+function binColor(m,v){ for (const [a,b,c] of binsFor(m)) if (v>=a && v<b) return cssv(c); return cssv("--mid"); }
+const fmtMargin = v => Math.abs(v)<0.05 ? "Even" : (v>0?"D+":"R+")+Math.abs(v).toFixed(1);
 const LAYERS = ["county","hd","sd","cd"]; // draw order bottom→top
 const META = {
   cd:{short:"CD",long:"Congressional District",min:0,w:2.6},
@@ -185,73 +231,181 @@ function inside(f,x,y){
 function hit(l,lat,lng){ return feats[l].find(f=>inside(f,lng,lat)); }
 
 // ---- map
-const FL_BOUNDS = L.latLngBounds([[24.2,-87.9],[31.2,-79.7]]);
-const map = L.map("map",{preferCanvas:true,zoomSnap:.25,maxZoom:17,maxBounds:FL_BOUNDS.pad(0.35),maxBoundsViscosity:1});
-map.attributionControl.setPrefix(false);
+const FLB = [-87.9,24.2,-79.7,31.2];
 const darkQ = matchMedia("(prefers-color-scheme: dark)");
-map.createPane("ref"); map.getPane("ref").style.zIndex=450; map.getPane("ref").style.pointerEvents="none";
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/";
+const esriUrl = (kind) => `${ESRI}World_${darkQ.matches?"Dark":"Light"}_Gray_${kind}/MapServer/tile/{z}/{y}/{x}`;
 const ESRI_ATTR = 'Basemap &copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, &copy; OpenStreetMap contributors';
 const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-let tiles = null, useOSM = false;
-function setTiles(){
-  const style = useOSM ? "osm" : (darkQ.matches ? "Dark" : "Light");
-  if (tiles && tiles._style===style) return;
-  if (tiles) map.removeLayer(tiles);
-  if (useOSM){
-    tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:OSM_ATTR,opacity:.75,bounds:FL_BOUNDS.pad(0.1)});
-  } else {
-    const base = L.tileLayer(`${ESRI}World_${style}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,attribution:ESRI_ATTR,bounds:FL_BOUNDS.pad(0.1)});
-    const ref = L.tileLayer(`${ESRI}World_${style}_Gray_Reference/MapServer/tile/{z}/{y}/{x}`,{maxZoom:19,maxNativeZoom:16,pane:"ref",bounds:FL_BOUNDS.pad(0.05)});
-    let errs = 0;
-    base.on("tileerror",()=>{ if(++errs===4 && !useOSM){ useOSM=true; setTiles(); } });
-    tiles = L.layerGroup([base,ref]);
-  }
-  tiles._style = style; tiles.addTo(map);
-}
-map.fitBounds(FL_BOUNDS,{padding:[10,10]});
-map.setMinZoom(Math.max(5, map.getZoom()-0.5));
-setTiles();
-const groups={}, labels={};
-for (const l of LAYERS){
-  groups[l]=L.geoJSON({type:"FeatureCollection",features:feats[l]},{interactive:false});
-  labels[l]=L.layerGroup(D.lbl[l].map(([id,x,y])=>L.marker([y,x],{interactive:false,keyboard:false,
-    icon:L.divIcon({className:"",iconSize:null,html:`<span class="lbl ${l}">${l==="county"?(D.cn[id]||id):id}</span>`})})));
-}
-const hi = L.layerGroup().addTo(map);
-let pin=null, sel=null, hoverKey=null;
+const fc = f => ({type:"FeatureCollection",features:f});
+const EMPTY = fc([]);
+const LINE = {
+  cd:{w:[5,1.6,9,2.6,13,3.6]}, sd:{w:[5,1.2,9,2,13,3]}, hd:{w:[5,.6,9,1.2,13,2.2]}, county:{w:[5,.6,9,1,13,1.6]}
+};
+const interp = a => ["interpolate",["linear"],["zoom"],...a];
+
+const map = new maplibregl.Map({
+  container:"map",
+  bounds:[[FLB[0],FLB[1]],[FLB[2],FLB[3]]],
+  fitBoundsOptions:{padding:10},
+  maxBounds:[[FLB[0]-3,FLB[1]-2.5],[FLB[2]+3,FLB[3]+2.5]],
+  maxZoom:17, dragRotate:false, pitchWithRotate:false, touchPitch:false,
+  attributionControl:{compact:true},
+  fadeDuration:150,
+  style:{version:8,sources:{
+      base:{type:"raster",tiles:[esriUrl("Base")],tileSize:256,maxzoom:16,bounds:FLB,attribution:ESRI_ATTR},
+      ref:{type:"raster",tiles:[esriUrl("Reference")],tileSize:256,maxzoom:16,bounds:FLB}
+    },
+    layers:[{id:"bg",type:"background",paint:{"background-color":cssv("--water")}},{id:"base",type:"raster",source:"base"}]}
+});
+map.touchZoomRotate.disableRotation();
+map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-left");
 
 const on = l => document.getElementById("lyr-"+l).checked;
-function restyle(){
-  setTiles();
-  for (const l of LAYERS){
-    groups[l].setStyle({color:cssv("--"+l),weight:META[l].w,opacity:l==="county"?.75:.9,fill:false,dashArray:l==="county"?"4 4":null});
+const shadeBy = document.getElementById("shade-by"), shadeLayer = document.getElementById("shade-layer"), legend = document.getElementById("legend");
+let shadeSrc = "cd";
+function applyShade(){
+  const m=shadeBy.value, l=shadeLayer.value;
+  shadeLayer.disabled = !m;
+  if (!m){ legend.hidden=true; whenReady(()=>{ map.setLayoutProperty("shade","visibility","none"); map.setPaintProperty("sel-fill","fill-opacity",.16); }); return; }
+  legend.hidden=false;
+  legend.innerHTML = binsFor(m).map(([,,c,lab])=>`<span><i style="background:var(${c})"></i>${lab}</span>`).join("");
+  whenReady(()=>{
+    if (shadeSrc!==l){
+      map.removeLayer("shade");
+      map.addLayer({id:"shade",type:"fill",source:l,paint:{"fill-color":"rgba(0,0,0,0)","fill-opacity":.55}},"sel-fill");
+      shadeSrc=l;
+    }
+    const expr=["match",["get","d"]];
+    for (const id of Object.keys(E[l])) expr.push(id, binColor(m, METRIC[m].f(E[l][id])));
+    expr.push("rgba(0,0,0,0)");
+    map.setPaintProperty("shade","fill-color",expr);
+    map.setPaintProperty("shade","fill-opacity",+cssv("--shade-op")||.55);
+    map.setLayoutProperty("shade","visibility","visible");
+    map.setPaintProperty("sel-fill","fill-opacity",0);
+  });
+  const cb=document.getElementById("lyr-"+l); if(!cb.checked){ cb.checked=true; syncLayers(); }
+}
+shadeBy.addEventListener("change",applyShade);
+shadeLayer.addEventListener("change",applyShade);
+const tip=document.createElement("div"); tip.className="maptip"; tip.hidden=true;
+document.getElementById("map").appendChild(tip);
+function hoverTip(e){
+  const m=shadeBy.value;
+  if (!m){ tip.hidden=true; return; }
+  const l=shadeLayer.value, f=hit(l,e.lngLat.lat,e.lngLat.lng);
+  if (!f){ tip.hidden=true; return; }
+  const id=f.properties.d, v=METRIC[m].f(E[l][id]);
+  tip.innerHTML=`<b>${dtag(l,id)}</b> · ${METRIC[m].kind==="margin"?fmtMargin(v):v.toFixed(1)+"% Yes"}`;
+  tip.style.left=(e.point.x+14)+"px"; tip.style.top=(e.point.y+14)+"px"; tip.hidden=false;
+}
+let pin=null, sel=null, hoverKey=null, ready=false, pending=[];
+const whenReady = fn => ready ? fn() : pending.push(fn);
+
+// labels drawn to small canvases so no font server is needed
+const LBL = {cd:{size:15,weight:700,fam:"Barlow Semi Condensed"},sd:{size:13,weight:700,fam:"Barlow Semi Condensed"},hd:{size:12,weight:700,fam:"Barlow Semi Condensed"},county:{size:10.5,weight:600,fam:"Barlow Semi Condensed",upper:true,track:1}};
+function labelImg(l,text){
+  const S=LBL[l], pr=2, c=document.createElement("canvas"), x=c.getContext("2d");
+  const font=`${S.weight} ${S.size*pr}px "${S.fam}", "Arial Narrow", sans-serif`;
+  const txt=S.upper?text.toUpperCase():text;
+  x.font=font; if(S.track) x.letterSpacing=(S.track*pr)+"px";
+  const w=Math.ceil(x.measureText(txt).width)+8*pr, h=Math.ceil(S.size*1.5*pr);
+  c.width=w; c.height=h;
+  x.font=font; if(S.track) x.letterSpacing=(S.track*pr)+"px";
+  x.textAlign="center"; x.textBaseline="middle"; x.lineJoin="round";
+  x.strokeStyle=cssv("--land"); x.lineWidth=3.5*pr; x.strokeText(txt,w/2,h/2);
+  x.fillStyle=cssv("--"+l); x.fillText(txt,w/2,h/2);
+  return {width:w,height:h,data:x.getImageData(0,0,w,h).data};
+}
+function buildLabels(){
+  for (const l of LAYERS) for (const [id] of D.lbl[l]){
+    const key=`lbl-${l}-${id}`, img=labelImg(l, l==="county"?(D.cn[id]||id):id);
+    if (map.hasImage(key)) map.removeImage(key);
+    map.addImage(key,img,{pixelRatio:2});
   }
-  drawHighlight();
+}
+
+map.on("load",()=>{
+  for (const l of LAYERS){
+    map.addSource(l,{type:"geojson",data:fc(feats[l]),tolerance:.5});
+    map.addSource("lbl-"+l,{type:"geojson",data:fc(D.lbl[l].map(([id,x,y])=>({type:"Feature",properties:{img:`lbl-${l}-${id}`},geometry:{type:"Point",coordinates:[x,y]}})))});
+  }
+  map.addSource("sel",{type:"geojson",data:EMPTY});
+  map.addSource("hover",{type:"geojson",data:EMPTY});
+  map.addLayer({id:"shade",type:"fill",source:"cd",layout:{visibility:"none"},paint:{"fill-color":"rgba(0,0,0,0)","fill-opacity":+cssv("--shade-op")||.55}});
+  map.addLayer({id:"sel-fill",type:"fill",source:"sel",paint:{"fill-color":cssv("--cd"),"fill-opacity":.16}});
+  map.addLayer({id:"hover-fill",type:"fill",source:"hover",paint:{"fill-color":cssv("--cd"),"fill-opacity":.12}});
+  for (const l of LAYERS){
+    map.addLayer({id:"line-"+l,type:"line",source:l,layout:{"line-join":"round"},paint:{
+      "line-color":cssv("--"+l),"line-width":interp(LINE[l].w),"line-opacity":l==="county"?.8:.92,
+      ...(l==="county"?{"line-dasharray":[3,2.5]}:{})}});
+  }
+  map.addLayer({id:"sel-line",type:"line",source:"sel",layout:{"line-join":"round"},paint:{"line-color":cssv("--cd"),"line-width":4}});
+  map.addLayer({id:"hover-line",type:"line",source:"hover",layout:{"line-join":"round"},paint:{"line-color":cssv("--cd"),"line-width":3,"line-dasharray":[2,1.5]}});
+  map.addLayer({id:"ref",type:"raster",source:"ref"});
+  const minz={cd:0,sd:7.5,hd:8,county:8};
+  for (const l of ["county","hd","sd","cd"]){
+    map.addLayer({id:"lbl-"+l,type:"symbol",source:"lbl-"+l,minzoom:minz[l],layout:{
+      "icon-image":["get","img"],"icon-allow-overlap":false,"icon-padding":2,"symbol-sort-key":{cd:0,sd:1,hd:2,county:3}[l]}});
+  }
+  buildLabels();
+  map.setMinZoom(Math.max(4.5,map.getZoom()-.5));
+  ready=true; pending.splice(0).forEach(fn=>fn());
+  syncLayers(); drawHighlight();
+});
+document.fonts && document.fonts.ready.then(()=>whenReady(buildLabels));
+
+let baseErrs=0, useOSM=false;
+map.on("error",e=>{
+  if (useOSM || !e || e.sourceId!=="base") return;
+  if (++baseErrs>=4){
+    useOSM=true;
+    map.removeLayer("ref"); 
+    map.getSource("base").setTiles(["https://tile.openstreetmap.org/{z}/{x}/{y}.png"]);
+    map.setPaintProperty("base","raster-opacity",.7);
+  }
+});
+
+function restyle(){
+  whenReady(()=>{
+    map.setPaintProperty("bg","background-color",cssv("--water"));
+    if (!useOSM){ map.getSource("base").setTiles([esriUrl("Base")]); map.getSource("ref").setTiles([esriUrl("Reference")]); }
+    for (const l of LAYERS) map.setPaintProperty("line-"+l,"line-color",cssv("--"+l));
+    buildLabels(); drawHighlight(); applyShade();
+  });
 }
 function syncLayers(){
-  const z=map.getZoom();
-  for (const l of LAYERS){
-    const g=groups[l];
-    if (on(l)) { if(!map.hasLayer(g)) g.addTo(map); } else if (map.hasLayer(g)) map.removeLayer(g);
-    const show = on(l) && z>=META[l].min && !(l==="cd" && z>=10.5 && on("hd"));
-    if (show){ if(!map.hasLayer(labels[l])) labels[l].addTo(map); } else if (map.hasLayer(labels[l])) map.removeLayer(labels[l]);
-  }
-  // keep z-order
-  for (const l of LAYERS) if (map.hasLayer(groups[l])) groups[l].bringToFront();
-  hi.eachLayer(x=>x.bringToFront && x.bringToFront());
+  whenReady(()=>{
+    for (const l of LAYERS){
+      const v=on(l)?"visible":"none";
+      map.setLayoutProperty("line-"+l,"visibility",v);
+      map.setLayoutProperty("lbl-"+l,"visibility",v);
+    }
+    map.setLayerZoomRange("lbl-cd",0,on("hd")?10.5:24);
+  });
 }
 function drawHighlight(){
-  hi.clearLayers();
-  if (sel){
-    const f=index[sel.l][sel.id], c=cssv("--"+sel.l);
-    L.geoJSON(f,{interactive:false,style:{color:c,weight:4,opacity:1,fillColor:c,fillOpacity:.16}}).addTo(hi);
-  }
-  if (hoverKey){
-    const [l,id]=hoverKey, c=cssv("--"+l);
-    L.geoJSON(index[l][id],{interactive:false,style:{color:c,weight:3,opacity:1,dashArray:"6 4",fillColor:c,fillOpacity:.12}}).addTo(hi);
-  }
+  whenReady(()=>{
+    if (sel){
+      const c=cssv("--"+sel.l);
+      map.getSource("sel").setData(index[sel.l][sel.id]);
+      map.setPaintProperty("sel-fill","fill-color",c); map.setPaintProperty("sel-line","line-color",c);
+    } else map.getSource("sel").setData(EMPTY);
+    if (hoverKey){
+      const [l,id]=hoverKey, c=cssv("--"+l);
+      map.getSource("hover").setData(index[l][id]);
+      map.setPaintProperty("hover-fill","fill-color",c); map.setPaintProperty("hover-line","line-color",c);
+    } else map.getSource("hover").setData(EMPTY);
+  });
 }
+function setPin(lat,lng){
+  if (pin) pin.remove();
+  const el=document.createElement("div"); el.className="pin";
+  pin=new maplibregl.Marker({element:el}).setLngLat([lng,lat]).addTo(map);
+}
+function clearPin(){ if(pin){ pin.remove(); pin=null; } }
+const fly = (lat,lng,z) => map.flyTo({center:[lng,lat],zoom:Math.max(map.getZoom(),z),duration:700,essential:true});
+const flyBox = b => map.fitBounds([[b[0],b[1]],[b[2],b[3]]],{padding:40,duration:700,essential:true});
 
 // ---- panel
 const out=document.getElementById("out");
@@ -267,23 +421,44 @@ function rowBtn(l,id,extra=""){
 function showPoint(lat,lng,label,zoom){
   sel=null; hoverKey=null; drawHighlight();
   setHash(`pt=${lat.toFixed(5)},${lng.toFixed(5)}`);
-  if (zoom) map.flyTo([lat,lng],Math.max(map.getZoom(),13),{duration:.6});
-  if (pin) map.removeLayer(pin);
-  pin=L.marker([lat,lng],{interactive:false,keyboard:false,icon:L.divIcon({className:"",iconSize:null,html:'<div class="pin"></div>'})}).addTo(map);
+  if (zoom) fly(lat,lng,13);
+  setPin(lat,lng);
   const found=["cd","sd","hd","county"].map(l=>[l,hit(l,lat,lng)]).filter(x=>x[1]);
   if (!found.length){ out.innerHTML=`<div class="hint">No Florida district there. That spot is offshore or outside the state.</div>`; return; }
   out.innerHTML = `<div>${label?`<p class="addr">${esc(label)}</p>`:""}<p class="eyebrow">At this spot · ${lat.toFixed(4)}, ${lng.toFixed(4)}</p>
     <div class="rows">${found.map(([l,f])=>rowBtn(l,f.properties.d)).join("")}</div></div>
     <div class="hint">Pick one to see everything it overlaps.</div>`;
 }
+function race(title, dName, dV, rName, rV, total){
+  const two=dV+rV, dp=pct(dV,total), rp=pct(rV,total), m=pct(dV-rV,two);
+  return `<div class="race"><div class="top"><b>${title}</b><span class="mg">${fmtMargin(m)}</span></div>
+    <div class="split" role="img" aria-label="${dName} ${dp.toFixed(1)}%, ${rName} ${rp.toFixed(1)}%"><i style="width:${dp}%;background:var(--d2)"></i><i style="flex:1;background:var(--chip)"></i><i style="width:${rp}%;background:var(--r2)"></i></div>
+    <div class="sub2"><span>${dName} ${dp.toFixed(1)}%</span><span>${rName} ${rp.toFixed(1)}%</span></div></div>`;
+}
+function amend(title, y, n){
+  const yp=pct(y,y+n), pass=yp>=60;
+  return `<div class="race"><div class="top"><b>${title}</b><span class="mg">${yp.toFixed(1)}% Yes</span></div>
+    <div class="split tick" role="img" aria-label="${yp.toFixed(1)} percent yes; 60 percent needed"><i style="width:${yp}%;background:var(${pass?"--y2":"--n2"})"></i></div>
+    <div class="sub2"><span>${fmt(y)} yes · ${fmt(n)} no</span><span>60% needed</span></div></div>`;
+}
+function results(l,id){
+  const e=E[l][id]; if(!e) return "";
+  return `<div><p class="eyebrow">2024 results within today's lines</p><div class="res">
+    ${race("President","Harris",e[3],"Trump",e[2],e[1])}
+    ${race("U.S. Senate","Mucarsel-Powell",e[5],"Scott",e[4],e[4]+e[5]+Math.max(0,e[1]-e[2]-e[3])*0)}
+    ${amend("Amendment 4 · abortion",e[8],e[9])}
+    ${amend("Amendment 3 · marijuana",e[6],e[7])}
+    <div class="sub2"><span>${fmt(e[1])} votes for president</span><span>${fmt(e[0])} adults (2020)</span></div>
+  </div></div>`;
+}
 function select(l,id,zoom=true){
   const f=index[l][id]; if(!f) return;
   sel={l,id}; hoverKey=null;
   setHash(l==="county" ? "county-"+slug(D.cn[id]||id) : l+"-"+id);
-  if (pin){ map.removeLayer(pin); pin=null; }
+  clearPin();
   const cb=document.getElementById("lyr-"+l); if(!cb.checked){ cb.checked=true; syncLayers(); }
   drawHighlight();
-  if (zoom) map.flyToBounds([[f.bbox[1],f.bbox[0]],[f.bbox[3],f.bbox[2]]],{padding:[30,30],duration:.6});
+  if (zoom) flyBox(f.bbox);
   const o=D.ov[l][id], pop=o.pop;
   const sections=["cd","sd","hd","county"].filter(k=>k!==l).map(k=>{
     const list=(o[k]||[]).filter(([,p])=>p>=Math.max(100,pop*.002));
@@ -299,6 +474,7 @@ function select(l,id,zoom=true){
   out.innerHTML = `<div><div class="dtitle"><h2>${dname(l,id)}</h2><button class="close" id="clear">Clear</button></div>
     <div class="stat">${fmt(pop)} residents (2020)</div></div>
     <div class="hint" style="font-size:12.5px">Share of this district's residents in each overlapping district. Hover to outline it on the map; click to jump to it.</div>
+    ${results(l,id)}
     ${sections}`;
   out.scrollTop=0;
 }
@@ -312,8 +488,11 @@ out.addEventListener("mouseover",e=>{
   if (String(k)!==String(hoverKey)){ hoverKey=k; drawHighlight(); }
 });
 out.addEventListener("mouseleave",()=>{ if(hoverKey){hoverKey=null; drawHighlight();} });
-map.on("click",e=>showPoint(e.latlng.lat,e.latlng.lng));
-map.on("zoomend",syncLayers);
+map.on("click",e=>showPoint(e.lngLat.lat,e.lngLat.lng));
+let tipRaf=0;
+map.on("mousemove",e=>{ if(tipRaf) return; tipRaf=requestAnimationFrame(()=>{tipRaf=0; hoverTip(e);}); });
+map.getCanvas().addEventListener("mouseleave",()=>{ tip.hidden=true; });
+map.on("movestart",()=>{ tip.hidden=true; });
 document.querySelectorAll(".layers input").forEach(i=>i.addEventListener("change",()=>{
   if (!i.checked && sel && sel.l===i.dataset.l){ sel=null; drawHighlight(); intro(); }
   syncLayers();
@@ -392,7 +571,7 @@ function fromHash(){
   return false;
 }
 addEventListener("hashchange",()=>{ if(!hashLock) fromHash(); });
-syncLayers(); restyle(); if(!fromHash()) intro();
+if(!fromHash()) intro();
 })();
 </script>
 </body>

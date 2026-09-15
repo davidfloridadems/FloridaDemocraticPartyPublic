@@ -4,6 +4,7 @@ An interactive map of Florida's congressional, state senate, state house and cou
 
 - **Search an address** or **click the map** to see every district that covers a spot.
 - **Search a district or county** (e.g. `HD 65`, `SD 20`, `Broward`) to see every district it overlaps and the share of residents they have in common.
+- **See 2024 results** for any district (President, U.S. Senate, Amendments 3 and 4), and **shade the map** by margin or Yes % for any layer.
 - **Share a link** to a specific view: the URL updates as you go.
   - `#cd-14`, `#sd-20`, `#hd-65`: a district
   - `#county-miami-dade`: a county
@@ -30,6 +31,7 @@ To embed it on another site, use an iframe:
 | Congressional districts | 2026 enacted plan (HB 1-D) block assignment file | Built by merging 2020 Census blocks by district, then clipped to the shoreline |
 | State Senate and State House | 2022 plans. Districts come from U.S. Census Bureau 2023 boundaries (`cb_2023_12_sldu_500k`, `cb_2023_12_sldl_500k`), assigned to 2020 blocks, then rebuilt from those blocks | Rebuilding from blocks lets all four layers share exactly the same edges |
 | Counties | 2020 Census blocks merged by county | All layers are clipped to the same shoreline |
+| 2024 election results | [Redistricting Data Hub](https://redistrictingdatahub.org/dataset/florida-2024-general-election-precinct-level-results-and-boundaries/) precinct results allocated to 2020 blocks by voting-age population | Totaled within each district as drawn today (so CD results reflect the 2026 lines, not the lines they were cast under). Margins are two-candidate (D minus R). Congressional margins match Dave's Redistricting App within 0.3 points |
 | Population and overlaps | 2020 Census block population (`POP20`) | Each block is assigned to districts by an interior point |
 
 Overlap percentages are *share of the selected district's residents*. Overlaps smaller than about 0.2% of a district, or under 100 people, are hidden. These are usually artifacts of the simplified boundary lines, not real overlaps.
@@ -40,10 +42,11 @@ The boundaries are simplified for fast loading, so they are accurate for plannin
 
 - `data/fl-districts.js`: everything the page loads (boundaries, labels, overlaps, county names)
 - `data/fl-districts.topojson`: boundaries only (layers `cd`, `sd`, `hd`, `county`; property `d` = district number or county FIPS)
+- `data/election-2024.json`: `layer → id → [adults (2020 VAP), president total, Trump, Harris, Scott, Mucarsel-Powell, A3 yes, A3 no, A4 yes, A4 no]`
 - `data/overlap.json`: population overlaps, `layer → id → {pop, <otherLayer>: [[id, people], …]}`
 
 ## Third-party services
 
 - Basemap tiles: Esri Light/Dark Gray Canvas (no API key; attribution © Esri, HERE, Garmin, OpenStreetMap contributors). If those tiles fail to load, the page falls back to standard [OpenStreetMap](https://www.openstreetmap.org/copyright) tiles. Keep the attribution visible.
 - Address search uses [OpenStreetMap Nominatim](https://operations.osmfoundation.org/policies/nominatim/). It's free for light use (at most 1 request per second, which the page enforces). If the map gets heavy traffic, switch to a keyed geocoder.
-- [Leaflet](https://leafletjs.com) and [topojson-client](https://github.com/topojson/topojson-client) are bundled in `vendor/` (BSD-2 / ISC licenses).
+- [MapLibre GL JS](https://maplibre.org) (GPU-rendered map, BSD-3) and [topojson-client](https://github.com/topojson/topojson-client) (ISC) are bundled in `vendor/`.
