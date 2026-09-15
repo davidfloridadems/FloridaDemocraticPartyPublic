@@ -44,6 +44,6 @@ The boundaries are simplified for fast loading, so they are accurate for plannin
 
 ## Third-party services
 
-- Basemap tiles © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors and © [CARTO](https://carto.com/attributions). Keep the attribution visible.
+- Basemap tiles: Esri Light/Dark Gray Canvas (no API key; attribution © Esri, HERE, Garmin, OpenStreetMap contributors). If those tiles fail to load, the page falls back to standard [OpenStreetMap](https://www.openstreetmap.org/copyright) tiles. Keep the attribution visible.
 - Address search uses [OpenStreetMap Nominatim](https://operations.osmfoundation.org/policies/nominatim/). It's free for light use (at most 1 request per second, which the page enforces). If the map gets heavy traffic, switch to a keyed geocoder.
 - [Leaflet](https://leafletjs.com) and [topojson-client](https://github.com/topojson/topojson-client) are bundled in `vendor/` (BSD-2 / ISC licenses).
