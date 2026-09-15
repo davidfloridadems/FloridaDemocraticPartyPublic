@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Florida District Overlap Map</title>
+<meta name="description" content="See where Florida's congressional, state senate, state house and county lines overlap. Search an address or district.">
+<meta property="og:title" content="Florida District Overlap Map">
+<meta property="og:description" content="See where Florida's congressional, state senate, state house and county lines overlap.">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html,body{margin:0}
+:root{
+  --water:#d6e2e6; --land:#f3f2ec; --ink:#1d2528; --ink-2:#56626a; --ink-3:#86919a;
+  --panel:#fbfbf8; --line:#dde0dc; --hover:#eef0eb; --chip:#e8ebe6;
+  --cd:#2450a0; --sd:#138a6e; --hd:#c4621a; --county:#6d7680;
+  --sel-fill:.16; --focus:#2450a0;
+  --f-ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-cond:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
+    --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
+    --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+  }
+}
+:root[data-theme="dark"]{
+  --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
+  --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
+  --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+}
+html,body{height:100%}
+body{background:var(--panel);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.45}
+.app{display:grid;grid-template-columns:360px 1fr;height:100%}
+.panel{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line);background:var(--panel)}
+.head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spacing:.01em;line-height:1.1;text-wrap:balance}
+.sub{margin:2px 0 0;color:var(--ink-2);font-size:13px}
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.layer{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;cursor:pointer;user-select:none;font-weight:500;font-size:13px;background:transparent;color:var(--ink)}
+.layer input{position:absolute;opacity:0;pointer-events:none}
+.layer .sw{width:18px;height:0;border-top:3px solid var(--c);flex:none}
+.layer.county .sw{border-top-style:dashed;border-top-width:2px}
+.layer .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.layer:has(input:not(:checked)){opacity:.45}
+.layer:has(input:not(:checked)) .sw{border-top-color:var(--ink-3)}
+.layer:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:1px}
+.search{position:relative}
+.search input{width:100%;box-sizing:border-box;font:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--land);color:var(--ink)}
+.search input:focus{outline:2px solid var(--focus);outline-offset:-1px}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.14);z-index:1000;max-height:300px;overflow:auto;margin:0;padding:4px;list-style:none}
+.sugg li{padding:7px 9px;border-radius:4px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.sugg li[aria-selected="true"],.sugg li:hover{background:var(--hover)}
+.body{flex:1;overflow:auto;padding:16px 20px 20px;display:grid;align-content:start;gap:18px}
+.hint{color:var(--ink-2);font-size:13.5px;max-width:34em}
+.hint b{color:var(--ink);font-weight:600}
+.eyebrow{font-family:var(--f-cond);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px}
+.tag{font-family:var(--f-cond);font-weight:700;font-size:12px;letter-spacing:.03em;padding:1px 6px;border-radius:3px;color:#fff;background:var(--c);white-space:nowrap}
+:root[data-theme="dark"] .tag{color:#0e171c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag{color:#0e171c}}
+.rows{display:grid;gap:2px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:5px;cursor:pointer;border:0;background:transparent;color:inherit;font:inherit;text-align:left;width:100%}
+.row:hover,.row:focus-visible{background:var(--hover);outline:none}
+.row .nm{font-weight:500}
+.row .go{margin-left:auto;color:var(--ink-3);font-size:12px}
+.dtitle{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.dtitle h2{margin:0;font-family:var(--f-cond);font-weight:700;font-size:24px;line-height:1.1}
+.close{border:1px solid var(--line);background:transparent;color:var(--ink-2);border-radius:5px;font:inherit;font-size:12px;padding:3px 8px;cursor:pointer}
+.close:hover{background:var(--hover)}
+.stat{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.ov{display:grid;gap:1px}
+.ovr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 10px;padding:6px 8px;border-radius:5px;cursor:pointer;border:0;background:transparent;color:inherit;font:inherit;text-align:left;width:100%}
+.ovr:hover,.ovr:focus-visible{background:var(--hover);outline:none}
+.ovr .bar{grid-column:1 / -1;height:3px;background:var(--chip);border-radius:2px;overflow:hidden}
+.ovr .bar i{display:block;height:100%;background:var(--c)}
+.ovr .pct{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
+.ovr .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.foot{padding:10px 20px 12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.4}
+#map{height:100%;background:var(--water)}
+.leaflet-container{background:var(--water);font-family:var(--f-ui)}
+.lbl{font-family:var(--f-cond);font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);display:inline-block;pointer-events:none;text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 2px var(--land)}
+.lbl.cd{color:var(--cd);font-size:15px}
+.lbl.sd{color:var(--sd);font-size:13px}
+.lbl.hd{color:var(--hd);font-size:12px}
+.lbl.county{color:var(--county);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.addr{margin:0 0 8px;font-weight:600;font-size:14px;line-height:1.35}
+.leaflet-control-attribution{font-size:10.5px;background:color-mix(in srgb,var(--panel) 85%,transparent)!important;color:var(--ink-3)}
+.leaflet-control-attribution a{color:var(--ink-2)}
+.pin{width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid var(--land);box-shadow:0 1px 4px rgba(0,0,0,.35);transform:translate(-50%,-50%)}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line)!important}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr;grid-template-rows:52% 48%}
+  .panel{order:2;border-right:0;border-top:1px solid var(--line)}
+  #map{order:1}
+  .head{padding:12px 16px 10px;gap:8px}
+  h1{font-size:18px}.sub{display:none}
+  .layers{grid-template-columns:repeat(4,1fr);gap:4px}
+  .layer{padding:6px;font-size:12px;gap:5px;justify-content:center}
+  .layer .n,.layer .full{display:none}
+  .body{padding:12px 16px 16px}
+  .foot{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <div class="head">
+      <div>
+        <h1>Florida District Overlap Map</h1>
+        <p class="sub">Congressional, State Senate, State House and county lines on one map.</p>
+      </div>
+      <div class="layers" role="group" aria-label="Map layers">
+        <label class="layer" style="--c:var(--cd)"><input type="checkbox" id="lyr-cd" data-l="cd" checked><span class="sw"></span>Congress<span class="n">28</span></label>
+        <label class="layer" style="--c:var(--sd)"><input type="checkbox" id="lyr-sd" data-l="sd" checked><span class="sw"></span>Senate<span class="n">40</span></label>
+        <label class="layer" style="--c:var(--hd)"><input type="checkbox" id="lyr-hd" data-l="hd"><span class="sw"></span>House<span class="n">120</span></label>
+        <label class="layer county" style="--c:var(--county)"><input type="checkbox" id="lyr-county" data-l="county" checked><span class="sw"></span>County<span class="n">67</span></label>
+      </div>
+      <div class="search">
+        <input id="q" type="search" placeholder="Address, district or county — e.g. HD 65, Broward" autocomplete="off" aria-label="Search an address, district or county" aria-controls="sugg">
+        <ul class="sugg" id="sugg" role="listbox" hidden></ul>
+      </div>
+    </div>
+    <div class="body" id="out"></div>
+    <div class="foot">Congress: 2026 map (HB 1-D), built from census block assignments. Legislature: 2022 plans. Population and overlap shares use 2020 Census blocks.</div>
+  </aside>
+  <div id="map"></div>
+</div>
+
+<script src="data/fl-districts.js"></script>
+<script src="vendor/leaflet.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
+<script>
+(function(){
+const D = window.FLD;
+const LAYERS = ["county","hd","sd","cd"]; // draw order bottom→top
+const META = {
+  cd:{short:"CD",long:"Congressional District",min:0,w:2.6},
+  sd:{short:"SD",long:"State Senate District",min:7.5,w:2},
+  hd:{short:"HD",long:"State House District",min:8,w:1.2},
+  county:{short:"",long:"County",min:8,w:.9}
+};
+
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = n => n.toLocaleString("en-US");
+const cname = id => (D.cn[id]||id) + " County";
+const dname = (l,id) => l==="county" ? cname(id) : META[l].long+" "+id;
+const dtag = (l,id) => l==="county" ? (D.cn[id]||id) : META[l].short+" "+id;
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slug = s => String(s).toLowerCase().replace(/\./g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+let hashLock=false;
+function setHash(h){ hashLock=true; history.replaceState(null,"",h?"#"+h:location.pathname+location.search); setTimeout(()=>hashLock=false,0); }
+// ---- geometry
+const feats = {}, index = {};
+for (const l of LAYERS){
+  feats[l] = topojson.feature(D.topo, D.topo.objects[l]).features;
+  index[l] = {};
+  for (const f of feats[l]){
+    const b=[180,90,-180,-90];
+    const rings = f.geometry.type==="Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+    for (const poly of rings) for (const ring of poly) for (const [x,y] of ring){ if(x<b[0])b[0]=x; if(y<b[1])b[1]=y; if(x>b[2])b[2]=x; if(y>b[3])b[3]=y; }
+    f.bbox=b; f.polys=rings; index[l][f.properties.d]=f;
+  }
+}
+function inside(f,x,y){
+  if (x<f.bbox[0]||x>f.bbox[2]||y<f.bbox[1]||y>f.bbox[3]) return false;
+  let c=false;
+  for (const poly of f.polys) for (const r of poly){
+    for (let i=0,j=r.length-1;i<r.length;j=i++){
+      const xi=r[i][0],yi=r[i][1],xj=r[j][0],yj=r[j][1];
+      if (((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) c=!c;
+    }
+  }
+  return c;
+}
+function hit(l,lat,lng){ return feats[l].find(f=>inside(f,lng,lat)); }
+
+// ---- map
+const map = L.map("map",{preferCanvas:true,zoomSnap:.25,minZoom:5.5,maxZoom:17});
+map.attributionControl.setPrefix(false);
+const darkQ = matchMedia("(prefers-color-scheme: dark)");
+const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+let tiles = null;
+function setTiles(){
+  const style = darkQ.matches ? "dark_all" : "light_all";
+  if (tiles && tiles._style===style) return;
+  if (tiles) map.removeLayer(tiles);
+  tiles = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`,{subdomains:"abcd",maxZoom:19,attribution:TILE_ATTR});
+  tiles._style = style; tiles.addTo(map);
+}
+setTiles();
+map.fitBounds([[24.4,-87.7],[31.05,-79.9]],{padding:[10,10]});
+const groups={}, labels={};
+for (const l of LAYERS){
+  groups[l]=L.geoJSON({type:"FeatureCollection",features:feats[l]},{interactive:false});
+  labels[l]=L.layerGroup(D.lbl[l].map(([id,x,y])=>L.marker([y,x],{interactive:false,keyboard:false,
+    icon:L.divIcon({className:"",iconSize:null,html:`<span class="lbl ${l}">${l==="county"?(D.cn[id]||id):id}</span>`})})));
+}
+const hi = L.layerGroup().addTo(map);
+let pin=null, sel=null, hoverKey=null;
+
+const on = l => document.getElementById("lyr-"+l).checked;
+function restyle(){
+  setTiles();
+  for (const l of LAYERS){
+    groups[l].setStyle({color:cssv("--"+l),weight:META[l].w,opacity:l==="county"?.75:.9,fill:false,dashArray:l==="county"?"4 4":null});
+  }
+  drawHighlight();
+}
+function syncLayers(){
+  const z=map.getZoom();
+  for (const l of LAYERS){
+    const g=groups[l];
+    if (on(l)) { if(!map.hasLayer(g)) g.addTo(map); } else if (map.hasLayer(g)) map.removeLayer(g);
+    const show = on(l) && z>=META[l].min && !(l==="cd" && z>=10.5 && on("hd"));
+    if (show){ if(!map.hasLayer(labels[l])) labels[l].addTo(map); } else if (map.hasLayer(labels[l])) map.removeLayer(labels[l]);
+  }
+  // keep z-order
+  for (const l of LAYERS) if (map.hasLayer(groups[l])) groups[l].bringToFront();
+  hi.eachLayer(x=>x.bringToFront && x.bringToFront());
+}
+function drawHighlight(){
+  hi.clearLayers();
+  if (sel){
+    const f=index[sel.l][sel.id], c=cssv("--"+sel.l);
+    L.geoJSON(f,{interactive:false,style:{color:c,weight:4,opacity:1,fillColor:c,fillOpacity:.16}}).addTo(hi);
+  }
+  if (hoverKey){
+    const [l,id]=hoverKey, c=cssv("--"+l);
+    L.geoJSON(index[l][id],{interactive:false,style:{color:c,weight:3,opacity:1,dashArray:"6 4",fillColor:c,fillOpacity:.12}}).addTo(hi);
+  }
+}
+
+// ---- panel
+const out=document.getElementById("out");
+function intro(){
+  out.innerHTML = `<div class="hint"><b>Search an address or click the map</b> to see every district that covers that spot. Search a district or county to see which others overlap it and how many people they share.</div>
+  <div><p class="eyebrow">Try one</p><div class="rows">
+    ${[["hd","65"],["sd","20"],["cd","14"],["county","011"]].map(([l,id])=>rowBtn(l,id)).join("")}
+  </div></div>`;
+}
+function rowBtn(l,id,extra=""){
+  return `<button class="row" data-l="${l}" data-id="${id}"><span class="tag" style="--c:var(--${l})">${l==="county"?"CO":META[l].short}</span><span class="nm">${dname(l,id)}</span>${extra}<span class="go">→</span></button>`;
+}
+function showPoint(lat,lng,label,zoom){
+  sel=null; hoverKey=null; drawHighlight();
+  setHash(`pt=${lat.toFixed(5)},${lng.toFixed(5)}`);
+  if (zoom) map.flyTo([lat,lng],Math.max(map.getZoom(),13),{duration:.6});
+  if (pin) map.removeLayer(pin);
+  pin=L.marker([lat,lng],{interactive:false,keyboard:false,icon:L.divIcon({className:"",iconSize:null,html:'<div class="pin"></div>'})}).addTo(map);
+  const found=["cd","sd","hd","county"].map(l=>[l,hit(l,lat,lng)]).filter(x=>x[1]);
+  if (!found.length){ out.innerHTML=`<div class="hint">No Florida district there. That spot is offshore or outside the state.</div>`; return; }
+  out.innerHTML = `<div>${label?`<p class="addr">${esc(label)}</p>`:""}<p class="eyebrow">At this spot · ${lat.toFixed(4)}, ${lng.toFixed(4)}</p>
+    <div class="rows">${found.map(([l,f])=>rowBtn(l,f.properties.d)).join("")}</div></div>
+    <div class="hint">Pick one to see everything it overlaps.</div>`;
+}
+function select(l,id,zoom=true){
+  const f=index[l][id]; if(!f) return;
+  sel={l,id}; hoverKey=null;
+  setHash(l==="county" ? "county-"+slug(D.cn[id]||id) : l+"-"+id);
+  if (pin){ map.removeLayer(pin); pin=null; }
+  const cb=document.getElementById("lyr-"+l); if(!cb.checked){ cb.checked=true; syncLayers(); }
+  drawHighlight();
+  if (zoom) map.flyToBounds([[f.bbox[1],f.bbox[0]],[f.bbox[3],f.bbox[2]]],{padding:[30,30],duration:.6});
+  const o=D.ov[l][id], pop=o.pop;
+  const sections=["cd","sd","hd","county"].filter(k=>k!==l).map(k=>{
+    const list=(o[k]||[]).filter(([,p])=>p>=Math.max(100,pop*.002));
+    const title={cd:"Congressional districts",sd:"State Senate districts",hd:"State House districts",county:"Counties"}[k];
+    return `<div><p class="eyebrow">${title} · ${list.length}</p><div class="ov">${list.map(([oid,p])=>{
+      const pct=p/pop*100, whole=D.ov[k][oid].pop, ofThat=p/whole*100;
+      return `<button class="ovr" data-l="${k}" data-id="${oid}" title="${fmt(p)} people · ${ofThat.toFixed(0)}% of ${dtag(k,oid)}">
+        <span class="tag" style="--c:var(--${k})">${k==="county"?"CO":META[k].short}</span>
+        <span class="nm">${k==="county"?cname(oid):META[k].short+" "+oid}</span>
+        <span class="pct">${pct>=99.5?"all":pct<1?"<1%":pct.toFixed(0)+"%"}</span>
+        <span class="bar" style="--c:var(--${k})"><i style="width:${Math.max(pct,1.5)}%"></i></span></button>`;}).join("")}</div></div>`;
+  }).join("");
+  out.innerHTML = `<div><div class="dtitle"><h2>${dname(l,id)}</h2><button class="close" id="clear">Clear</button></div>
+    <div class="stat">${fmt(pop)} residents (2020)</div></div>
+    <div class="hint" style="font-size:12.5px">Share of this district's residents in each overlapping district. Hover to outline it on the map; click to jump to it.</div>
+    ${sections}`;
+  out.scrollTop=0;
+}
+out.addEventListener("click",e=>{
+  if (e.target.id==="clear"){ sel=null; hoverKey=null; drawHighlight(); setHash(""); intro(); return; }
+  const g=e.target.closest(".geo"); if(g){ q.value=""; showPoint(+g.dataset.lat,+g.dataset.lon,g.dataset.name,true); return; }
+  const b=e.target.closest("[data-l]"); if(b) select(b.dataset.l,b.dataset.id);
+});
+out.addEventListener("mouseover",e=>{
+  const b=e.target.closest(".ovr"); const k=b?[b.dataset.l,b.dataset.id]:null;
+  if (String(k)!==String(hoverKey)){ hoverKey=k; drawHighlight(); }
+});
+out.addEventListener("mouseleave",()=>{ if(hoverKey){hoverKey=null; drawHighlight();} });
+map.on("click",e=>showPoint(e.latlng.lat,e.latlng.lng));
+map.on("zoomend",syncLayers);
+document.querySelectorAll(".layers input").forEach(i=>i.addEventListener("change",()=>{
+  if (!i.checked && sel && sel.l===i.dataset.l){ sel=null; drawHighlight(); intro(); }
+  syncLayers();
+}));
+
+// ---- search
+const ALL=[];
+for (const l of ["cd","sd","hd"]) for (const id of Object.keys(index[l]).sort((a,b)=>a-b))
+  ALL.push({l,id,keys:[`${META[l].short} ${id}`, `${META[l].short}${id}`, `${META[l].long} ${id}`, `${{cd:"congress",sd:"senate",hd:"house"}[l]} ${id}`].map(s=>s.toLowerCase())});
+for (const id of Object.keys(index.county).sort((a,b)=>(D.cn[a]||"").localeCompare(D.cn[b]||"")))
+  ALL.push({l:"county",id,keys:[(D.cn[id]||"").toLowerCase(), cname(id).toLowerCase()]});
+const q=document.getElementById("q"), sugg=document.getElementById("sugg");
+let hits=[], active=0;
+function renderSugg(){
+  const raw=q.value.trim();
+  if (raw.length>=4 && !hits.some(h=>h.addr)) hits.push({addr:raw});
+  if(!hits.length){ sugg.hidden=true; q.setAttribute("aria-expanded","false"); return; }
+  sugg.innerHTML=hits.map((h,i)=>(h.addr ? `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--ink-2)">ADDR</span>Search address “${esc(h.addr)}”</li>` : `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--${h.l})">${h.l==="county"?"CO":META[h.l].short}</span>${dname(h.l,h.id)}</li>`)).join("");
+  sugg.hidden=false; q.setAttribute("aria-expanded","true");
+}
+q.addEventListener("input",()=>{
+  const s=q.value.trim().toLowerCase().replace(/\s+/g," ").replace(/^(district|dist)\s*/,"");
+  if(!s){hits=[];sugg.hidden=true;return;}
+  const exact=[],starts=[],contains=[];
+  for (const a of ALL){
+    if (a.keys.some(k=>k===s)) exact.push(a);
+    else if (a.keys.some(k=>k.startsWith(s))) starts.push(a);
+    else if (a.keys.some(k=>k.includes(s))) contains.push(a);
+  }
+  hits=[...exact,...starts,...contains].slice(0,8); active=0; renderSugg();
+});
+function pick(i){
+  const h=hits[i]; if(!h) return;
+  hits=[]; sugg.hidden=true;
+  if (h.addr) { geocode(h.addr); return; }
+  q.value=""; select(h.l,h.id);
+}
+let lastGeo=0;
+async function geocode(text){
+  const wait=Math.max(0,1100-(Date.now()-lastGeo)); if(wait) await new Promise(r=>setTimeout(r,wait));
+  lastGeo=Date.now();
+  out.innerHTML=`<div class="hint">Looking up “${esc(text)}”…</div>`;
+  const qs=/\b(fl|florida)\b/i.test(text)?text:text+", Florida";
+  const url="https://nominatim.openstreetmap.org/search?"+new URLSearchParams({format:"jsonv2",q:qs,countrycodes:"us",viewbox:"-87.8,31.1,-79.8,24.3",bounded:"1",limit:"5",addressdetails:"0"});
+  try{
+    const r=await fetch(url,{headers:{"Accept":"application/json"}});
+    if(!r.ok) throw new Error(r.status);
+    const res=await r.json();
+    if(!res.length){ out.innerHTML=`<div class="hint">No match for “${esc(text)}”. Try adding the city, or click the spot on the map.</div>`; return; }
+    if(res.length===1){ const x=res[0]; showPoint(+x.lat,+x.lon,x.display_name,true); return; }
+    out.innerHTML=`<div><p class="eyebrow">Which one?</p><div class="rows">${res.map((x,i)=>`<button class="row geo" data-lat="${x.lat}" data-lon="${x.lon}" data-name="${esc(x.display_name)}"><span class="nm">${esc(x.display_name.replace(/, United States$/,""))}</span><span class="go">→</span></button>`).join("")}</div></div>`;
+  }catch(err){
+    out.innerHTML=`<div class="hint">Address search isn't responding right now. Click the spot on the map instead.</div>`;
+  }
+}
+q.addEventListener("keydown",e=>{
+  if(sugg.hidden) return;
+  if(e.key==="ArrowDown"){active=Math.min(active+1,hits.length-1);renderSugg();e.preventDefault();}
+  else if(e.key==="ArrowUp"){active=Math.max(active-1,0);renderSugg();e.preventDefault();}
+  else if(e.key==="Enter"){pick(active);e.preventDefault();}
+  else if(e.key==="Escape"){hits=[];renderSugg();}
+});
+sugg.addEventListener("mousedown",e=>{ const li=e.target.closest("li"); if(li){ e.preventDefault(); pick(+li.dataset.i);} });
+q.addEventListener("blur",()=>setTimeout(()=>{hits=[];renderSugg();},120));
+
+// ---- theme
+darkQ.addEventListener("change",restyle);
+
+function fromHash(){
+  const h=decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  let m;
+  if ((m=h.match(/^(cd|sd|hd)-(\d+)$/)) && index[m[1]][String(+m[2])]) return select(m[1],String(+m[2])), true;
+  if ((m=h.match(/^county-(.+)$/))){ const id=Object.keys(D.cn).find(k=>slug(D.cn[k])===m[1]); if(id) return select("county",id), true; }
+  if ((m=h.match(/^pt=(-?[\d.]+),(-?[\d.]+)$/))) return showPoint(+m[1],+m[2],null,true), true;
+  if ((m=h.match(/^layers=([a-z,]+)$/))) { const s=m[1].split(","); for(const l of LAYERS) document.getElementById("lyr-"+l).checked=s.includes(l); syncLayers(); }
+  return false;
+}
+addEventListener("hashchange",()=>{ if(!hashLock) fromHash(); });
+syncLayers(); restyle(); if(!fromHash()) intro();
+})();
+</script>
+</body>
+</html>
