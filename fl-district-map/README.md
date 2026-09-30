@@ -3,6 +3,7 @@
 An interactive map of Florida's congressional, state senate, state house and county boundaries on one map, built for planning events and outreach across districts.
 
 - **Search an address** or **click the map** to see every district that covers a spot.
+- **Six layers:** congressional, state senate, state house, county, municipal (411 incorporated cities, towns and villages) and voting precincts (5,690). Precincts load only when you switch that layer on, since the file is larger.
 - **Search a district or county** (e.g. `HD 65`, `SD 20`, `Broward`) to see every district it overlaps and the share of residents they have in common.
 - **See 2024 results** for any district (President, U.S. Senate, Amendments 3 and 4), and **shade the map** by margin or Yes % for any layer.
 - **Share a link** to a specific view: the URL updates as you go.
@@ -32,6 +33,8 @@ To embed it on another site, use an iframe:
 | State Senate and State House | 2022 plans. Districts come from U.S. Census Bureau 2023 boundaries (`cb_2023_12_sldu_500k`, `cb_2023_12_sldl_500k`), assigned to 2020 blocks, then rebuilt from those blocks | Rebuilding from blocks lets all four layers share exactly the same edges |
 | Counties | 2020 Census blocks merged by county | All layers are clipped to the same shoreline |
 | 2024 election results | [Redistricting Data Hub](https://redistrictingdatahub.org/dataset/florida-2024-general-election-precinct-level-results-and-boundaries/) precinct results allocated to 2020 blocks by voting-age population | Totaled within each district as drawn today (so CD results reflect the 2026 lines, not the lines they were cast under). Margins are two-candidate (D minus R). Congressional margins match Dave's Redistricting App within 0.3 points |
+| Municipalities | U.S. Census Bureau 2023 place boundaries (`cb_2023_12_place_500k`), incorporated places only (LSAD 25/43/47) | Unincorporated CDPs are excluded, so this is city limits, not "the Tampa area" |
+| Precincts | Precinct assignment on each 2020 block, from the Redistricting Data Hub 2024 general election file | **These are the precincts as of the November 2024 general election.** Counties redraw precincts between cycles, so treat them as a close approximation, not today's official lines. For current lines, get the county's own file from its Supervisor of Elections and replace that county's features |
 | Population and overlaps | 2020 Census block population (`POP20`) | Each block is assigned to districts by an interior point |
 
 Overlap percentages are *share of the selected district's residents*. Overlaps smaller than about 0.2% of a district, or under 100 people, are hidden. These are usually artifacts of the simplified boundary lines, not real overlaps.
@@ -43,6 +46,7 @@ The boundaries are simplified for fast loading, so they are accurate for plannin
 - `data/fl-districts.js`: everything the page loads (boundaries, labels, overlaps, county names)
 - `data/fl-districts.topojson`: boundaries only (layers `cd`, `sd`, `hd`, `county`; property `d` = district number or county FIPS)
 - `data/election-2024.json`: `layer → id → [adults (2020 VAP), president total, Trump, Harris, Scott, Mucarsel-Powell, A3 yes, A3 no, A4 yes, A4 no]`
+- `data/fl-precincts.js`: the precinct layer (boundaries, labels, population, parent districts, 2024 results), loaded on demand
 - `data/overlap.json`: population overlaps, `layer → id → {pop, <otherLayer>: [[id, people], …]}`
 
 ## Third-party services

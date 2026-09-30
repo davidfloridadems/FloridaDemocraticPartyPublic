@@ -19,7 +19,7 @@ html,body{margin:0}
   --y1:#9fdcc4; --y2:#1baf7a; --y3:#0d7a53; --n1:#f5b49a; --n2:#eb6834; --n3:#b44a1d; --shade-op:.55;
   --water:#d6e2e6; --land:#f3f2ec; --ink:#1d2528; --ink-2:#56626a; --ink-3:#86919a;
   --panel:#fbfbf8; --line:#dde0dc; --hover:#eef0eb; --chip:#e8ebe6;
-  --cd:#2450a0; --sd:#138a6e; --hd:#c4621a; --county:#6d7680;
+  --cd:#2450a0; --sd:#138a6e; --hd:#c4621a; --county:#6d7680; --city:#4a3aa7; --pct:#a33a6b;
   --sel-fill:.16; --focus:#2450a0;
   --f-ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-cond:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
@@ -29,7 +29,7 @@ html,body{margin:0}
   :root:not([data-theme="light"]){
     --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
     --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
-    --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+    --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee; --city:#9085e9; --pct:#e58ab4;
     --d1:#184f95; --d2:#2a78d6; --d3:#6da7ec; --r1:#7a2524; --r2:#c83d3c; --r3:#e66767; --mid:#383835;
     --y1:#0f5e42; --y2:#199e70; --y3:#5fd0a4; --n1:#7d3413; --n2:#d95926; --n3:#f08a5d; --shade-op:.6;
   }
@@ -37,23 +37,27 @@ html,body{margin:0}
 :root[data-theme="dark"]{
   --water:#0e171c; --land:#1b2327; --ink:#e7ebe8; --ink-2:#a8b2b6; --ink-3:#77838a;
   --panel:#141b1f; --line:#2a3439; --hover:#1f292e; --chip:#243036;
-  --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee;
+  --cd:#7fa6ee; --sd:#4cc9a6; --hd:#f0954e; --county:#8b959c; --focus:#7fa6ee; --city:#9085e9; --pct:#e58ab4;
   --d1:#184f95; --d2:#2a78d6; --d3:#6da7ec; --r1:#7a2524; --r2:#c83d3c; --r3:#e66767; --mid:#383835;
   --y1:#0f5e42; --y2:#199e70; --y3:#5fd0a4; --n1:#7d3413; --n2:#d95926; --n3:#f08a5d; --shade-op:.6;
 }
 html,body{height:100%}
 body{background:var(--panel);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.45}
 .app{display:grid;grid-template-columns:360px 1fr;height:100%}
-.panel{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line);background:var(--panel)}
-.head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:grid;gap:12px}
-h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spacing:.01em;line-height:1.1;text-wrap:balance}
+.panel{display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;border-right:1px solid var(--line);background:var(--panel)}
+.head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:grid;gap:12px;min-width:0}
+h1{margin:0;min-width:0;font-family:var(--f-cond);font-weight:700;font-size:21px;overflow-wrap:break-word;letter-spacing:.01em;line-height:1.1;text-wrap:balance}
 .sub{margin:2px 0 0;color:var(--ink-2);font-size:13px}
-.layers{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.layer{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;cursor:pointer;user-select:none;font-weight:500;font-size:13px;background:transparent;color:var(--ink)}
+.head > *{min-width:0}
+.layers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;min-width:0}
+.legend{min-width:0}
+.layer.busy{opacity:.6}
+.layer.busy::after{content:"…"}
+.layer{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;white-space:nowrap;padding:7px 8px;font-size:12.5px;border:1px solid var(--line);border-radius:6px;cursor:pointer;user-select:none;font-weight:500;font-size:13px;background:transparent;color:var(--ink)}
 .layer input{position:absolute;opacity:0;pointer-events:none}
 .layer .sw{width:18px;height:0;border-top:3px solid var(--c);flex:none}
 .layer.county .sw{border-top-style:dashed;border-top-width:2px}
-.layer .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.layer .n{margin-left:auto;flex:none;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
 .layer:has(input:not(:checked)){opacity:.45}
 .layer:has(input:not(:checked)) .sw{border-top-color:var(--ink-3)}
 .layer:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:1px}
@@ -87,7 +91,7 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
 .ovr .bar i{display:block;height:100%;background:var(--c)}
 .ovr .pct{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right}
 .ovr .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.shade{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.shade{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:6px;align-items:center;min-width:0}
 .shade select{font:inherit;font-size:13px;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--land);color:var(--ink);min-width:0}
 .shade select:focus-visible{outline:2px solid var(--focus);outline-offset:-1px}
 .legend{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
@@ -100,7 +104,7 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
 .race .mg{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
 .split{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--chip);gap:2px}
 .split i{display:block;height:100%}
-.race .sub2{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.sub2{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .tick{position:relative}
 .tick::after{content:"";position:absolute;left:60%;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
 .maptip{position:absolute;pointer-events:none;z-index:5;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.15);white-space:nowrap}
@@ -118,7 +122,7 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
   #map{order:1}
   .head{padding:12px 16px 10px;gap:8px}
   h1{font-size:18px}.sub{display:none}
-  .layers{grid-template-columns:repeat(4,1fr);gap:4px}
+  .layers{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
   .layer{padding:6px;font-size:12px;gap:5px;justify-content:center}
   .layer .n,.layer .full{display:none}
   .body{padding:12px 16px 16px}
@@ -141,6 +145,8 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
         <label class="layer" style="--c:var(--sd)"><input type="checkbox" id="lyr-sd" data-l="sd" checked><span class="sw"></span>Senate<span class="n">40</span></label>
         <label class="layer" style="--c:var(--hd)"><input type="checkbox" id="lyr-hd" data-l="hd"><span class="sw"></span>House<span class="n">120</span></label>
         <label class="layer county" style="--c:var(--county)"><input type="checkbox" id="lyr-county" data-l="county" checked><span class="sw"></span>County<span class="n">67</span></label>
+        <label class="layer" style="--c:var(--city)"><input type="checkbox" id="lyr-city" data-l="city"><span class="sw"></span>Cities<span class="n">411</span></label>
+        <label class="layer" id="lab-pct" style="--c:var(--pct)"><input type="checkbox" id="lyr-pct" data-l="pct"><span class="sw"></span>Precincts<span class="n">5.7k</span></label>
       </div>
       <div class="shade">
         <select id="shade-by" aria-label="Shade the map by">
@@ -151,7 +157,7 @@ h1{margin:0;font-family:var(--f-cond);font-weight:700;font-size:22px;letter-spac
           <option value="a3">Amendment 3 (marijuana) — Yes %</option>
         </select>
         <select id="shade-layer" aria-label="Districts to shade">
-          <option value="cd">Congress</option><option value="sd">Senate</option><option value="hd">House</option><option value="county">County</option>
+          <option value="cd">Congress</option><option value="sd">Senate</option><option value="hd">House</option><option value="county">County</option><option value="city">Cities</option><option value="pct">Precincts</option>
         </select>
         <div class="legend" id="legend" hidden></div>
       </div>
@@ -187,19 +193,34 @@ const YES_BINS = [[-Infinity,50,"--n3","Under 50%"],[50,55,"--n2","50–55%"],[5
 const binsFor = m => METRIC[m].kind==="margin" ? MARGIN_BINS : YES_BINS;
 function binColor(m,v){ for (const [a,b,c] of binsFor(m)) if (v>=a && v<b) return cssv(c); return cssv("--mid"); }
 const fmtMargin = v => Math.abs(v)<0.05 ? "Even" : (v>0?"D+":"R+")+Math.abs(v).toFixed(1);
-const LAYERS = ["county","hd","sd","cd"]; // draw order bottom→top
+const BASE_LAYERS = ["county","hd","sd","cd"];      // in the main data file
+const LAYERS = ["pct","county","city","hd","sd","cd"]; // draw order bottom→top
+const ALL_TITLES = {cd:"Congressional districts",sd:"State Senate districts",hd:"State House districts",county:"Counties",city:"Cities and towns",pct:"Precincts"};
 const META = {
   cd:{short:"CD",long:"Congressional District",min:0,w:2.6},
   sd:{short:"SD",long:"State Senate District",min:7.5,w:2},
   hd:{short:"HD",long:"State House District",min:8,w:1.2},
-  county:{short:"",long:"County",min:8,w:.9}
+  county:{short:"CO",long:"County",min:8,w:.9},
+  city:{short:"CITY",long:"City",min:9.5,w:1.1},
+  pct:{short:"PCT",long:"Precinct",min:11,w:.7}
 };
 
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const fmt = n => n.toLocaleString("en-US");
 const cname = id => (D.cn[id]||id) + " County";
-const dname = (l,id) => l==="county" ? cname(id) : META[l].long+" "+id;
-const dtag = (l,id) => l==="county" ? (D.cn[id]||id) : META[l].short+" "+id;
+const cityName = id => (D.city.names[id]||id);
+const pctParts = id => { const i=String(id).indexOf("|"); return [String(id).slice(0,i), String(id).slice(i+1)]; };
+const pctName = id => { const [c,n]=pctParts(id); return `${titleCase(c)} precinct ${n}`; };
+const titleCase = s => s.replace(/\w[^\s-]*/g, w => w[0].toUpperCase()+w.slice(1).toLowerCase());
+const dname = (l,id) => l==="county" ? cname(id) : l==="city" ? cityName(id) : l==="pct" ? pctName(id) : META[l].long+" "+id;
+const dtag = (l,id) => l==="county" ? (D.cn[id]||id) : l==="city" ? cityName(id) : l==="pct" ? pctParts(id)[1] : META[l].short+" "+id;
+const tagText = l => l==="county" ? "CO" : META[l].short;
+// per-district stats: {pop, e, <layer>:[[id,people],…], pctn}
+function statOf(l,id){
+  if (l==="pct") { const s=PCT && PCT.st[id]; return s ? Object.assign({},s,{e:PCT.ex[id]}) : null; }
+  const o=D.ov[l] && D.ov[l][id]; if(!o) return null;
+  return Object.assign({},o,{e:(E[l]||{})[id]});
+}
 
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const slug = s => String(s).toLowerCase().replace(/\./g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -207,8 +228,8 @@ let hashLock=false;
 function setHash(h){ hashLock=true; history.replaceState(null,"",h?"#"+h:location.pathname+location.search); setTimeout(()=>hashLock=false,0); }
 // ---- geometry
 const feats = {}, index = {};
-for (const l of LAYERS){
-  feats[l] = topojson.feature(D.topo, D.topo.objects[l]).features;
+function addFeats(l, topo, objName){
+  feats[l] = topojson.feature(topo, topo.objects[objName]).features.filter(f=>f.geometry && f.geometry.coordinates && f.geometry.coordinates.length);
   index[l] = {};
   for (const f of feats[l]){
     const b=[180,90,-180,-90];
@@ -217,6 +238,8 @@ for (const l of LAYERS){
     f.bbox=b; f.polys=rings; index[l][f.properties.d]=f;
   }
 }
+for (const l of BASE_LAYERS) addFeats(l, D.topo, l);
+addFeats("city", D.city.topo, "city");
 function inside(f,x,y){
   if (x<f.bbox[0]||x>f.bbox[2]||y<f.bbox[1]||y>f.bbox[3]) return false;
   let c=false;
@@ -228,7 +251,7 @@ function inside(f,x,y){
   }
   return c;
 }
-function hit(l,lat,lng){ return feats[l].find(f=>inside(f,lng,lat)); }
+function hit(l,lat,lng){ return (feats[l]||[]).find(f=>inside(f,lng,lat)); }
 
 // ---- map
 const FLB = [-87.9,24.2,-79.7,31.2];
@@ -240,7 +263,8 @@ const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenS
 const fc = f => ({type:"FeatureCollection",features:f});
 const EMPTY = fc([]);
 const LINE = {
-  cd:{w:[5,1.6,9,2.6,13,3.6]}, sd:{w:[5,1.2,9,2,13,3]}, hd:{w:[5,.6,9,1.2,13,2.2]}, county:{w:[5,.6,9,1,13,1.6]}
+  cd:{w:[5,1.6,9,2.6,13,3.6]}, sd:{w:[5,1.2,9,2,13,3]}, hd:{w:[5,.6,9,1.2,13,2.2]}, county:{w:[5,.6,9,1,13,1.6]},
+  city:{w:[8,.6,11,1.2,14,2]}, pct:{w:[10,.4,13,.9,16,1.6]}
 };
 const interp = a => ["interpolate",["linear"],["zoom"],...a];
 
@@ -262,10 +286,44 @@ map.touchZoomRotate.disableRotation();
 map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-left");
 
 const on = l => document.getElementById("lyr-"+l).checked;
+let PCT=null, pctLoading=null;
+function loadPrecincts(){
+  if (PCT) return Promise.resolve(PCT);
+  if (pctLoading) return pctLoading;
+  document.getElementById("lab-pct").classList.add("busy");
+  pctLoading = new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src="data/fl-precincts.js"; s.onload=()=>res(); s.onerror=()=>rej(new Error("load"));
+    document.head.appendChild(s);
+  }).then(()=>{
+    PCT=window.FLP;
+    addFeats("pct", PCT.topo, "pct");
+    whenReady(()=>{
+      map.addSource("pct",{type:"geojson",data:fc(feats.pct),tolerance:.4});
+      map.addSource("lbl-pct",{type:"geojson",data:lblSourceData("pct")});
+      map.addLayer({id:"line-pct",type:"line",source:"pct",layout:{"line-join":"round"},paint:{
+        "line-color":cssv("--pct"),"line-width":interp(LINE.pct.w),"line-opacity":.85}},"line-county");
+      map.addLayer({id:"lbl-pct",type:"symbol",source:"lbl-pct",minzoom:META.pct.min,layout:{
+        "icon-image":["get","img"],"icon-allow-overlap":false,"icon-padding":2,"symbol-sort-key":5}});
+      buildLabels();
+      addSearchLayer("pct");
+      syncLayers();
+    });
+    document.getElementById("lab-pct").classList.remove("busy");
+    return PCT;
+  }).catch(err=>{
+    document.getElementById("lab-pct").classList.remove("busy");
+    document.getElementById("lyr-pct").checked=false;
+    pctLoading=null;
+    throw err;
+  });
+  return pctLoading;
+}
 const shadeBy = document.getElementById("shade-by"), shadeLayer = document.getElementById("shade-layer"), legend = document.getElementById("legend");
 let shadeSrc = "cd";
 function applyShade(){
   const m=shadeBy.value, l=shadeLayer.value;
+  if (m && l==="pct" && !PCT){ document.getElementById("lyr-pct").checked=true; loadPrecincts().then(applyShade).catch(()=>{}); return; }
   shadeLayer.disabled = !m;
   if (!m){ legend.hidden=true; whenReady(()=>{ map.setLayoutProperty("shade","visibility","none"); map.setPaintProperty("sel-fill","fill-opacity",.16); }); return; }
   legend.hidden=false;
@@ -276,8 +334,9 @@ function applyShade(){
       map.addLayer({id:"shade",type:"fill",source:l,paint:{"fill-color":"rgba(0,0,0,0)","fill-opacity":.55}},"sel-fill");
       shadeSrc=l;
     }
+    const EX = l==="pct" ? PCT.ex : E[l];
     const expr=["match",["get","d"]];
-    for (const id of Object.keys(E[l])) expr.push(id, binColor(m, METRIC[m].f(E[l][id])));
+    for (const id of Object.keys(EX)) if (EX[id][1] > 0) expr.push(id, binColor(m, METRIC[m].f(EX[id])));
     expr.push("rgba(0,0,0,0)");
     map.setPaintProperty("shade","fill-color",expr);
     map.setPaintProperty("shade","fill-opacity",+cssv("--shade-op")||.55);
@@ -295,15 +354,16 @@ function hoverTip(e){
   if (!m){ tip.hidden=true; return; }
   const l=shadeLayer.value, f=hit(l,e.lngLat.lat,e.lngLat.lng);
   if (!f){ tip.hidden=true; return; }
-  const id=f.properties.d, v=METRIC[m].f(E[l][id]);
-  tip.innerHTML=`<b>${dtag(l,id)}</b> · ${METRIC[m].kind==="margin"?fmtMargin(v):v.toFixed(1)+"% Yes"}`;
+  const ex=(l==="pct"?(PCT&&PCT.ex):E[l])||{}; const id=f.properties.d; if(!ex[id]||!ex[id][1]){ tip.hidden=true; return; }
+  const v=METRIC[m].f(ex[id]);
+  tip.innerHTML=`<b>${esc(dname(l,id))}</b> · ${METRIC[m].kind==="margin"?fmtMargin(v):v.toFixed(1)+"% Yes"}`;
   tip.style.left=(e.point.x+14)+"px"; tip.style.top=(e.point.y+14)+"px"; tip.hidden=false;
 }
 let pin=null, sel=null, hoverKey=null, ready=false, pending=[];
 const whenReady = fn => ready ? fn() : pending.push(fn);
 
 // labels drawn to small canvases so no font server is needed
-const LBL = {cd:{size:15,weight:700,fam:"Barlow Semi Condensed"},sd:{size:13,weight:700,fam:"Barlow Semi Condensed"},hd:{size:12,weight:700,fam:"Barlow Semi Condensed"},county:{size:10.5,weight:600,fam:"Barlow Semi Condensed",upper:true,track:1}};
+const LBL = {cd:{size:15,weight:700,fam:"Barlow Semi Condensed"},sd:{size:13,weight:700,fam:"Barlow Semi Condensed"},hd:{size:12,weight:700,fam:"Barlow Semi Condensed"},county:{size:10.5,weight:600,fam:"Barlow Semi Condensed",upper:true,track:1},city:{size:11.5,weight:600,fam:"Barlow Semi Condensed"},pct:{size:10.5,weight:600,fam:"Barlow Semi Condensed"}};
 function labelImg(l,text){
   const S=LBL[l], pr=2, c=document.createElement("canvas"), x=c.getContext("2d");
   const font=`${S.weight} ${S.size*pr}px "${S.fam}", "Arial Narrow", sans-serif`;
@@ -317,18 +377,21 @@ function labelImg(l,text){
   x.fillStyle=cssv("--"+l); x.fillText(txt,w/2,h/2);
   return {width:w,height:h,data:x.getImageData(0,0,w,h).data};
 }
+const lblPoints = l => l==="city" ? D.city.lbl : l==="pct" ? (PCT?PCT.lbl:[]) : D.lbl[l];
 function buildLabels(){
-  for (const l of LAYERS) for (const [id] of D.lbl[l]){
-    const key=`lbl-${l}-${id}`, img=labelImg(l, l==="county"?(D.cn[id]||id):id);
+  for (const l of LAYERS) for (const [id] of lblPoints(l)){
+    const key=`lbl-${l}-${id}`, img=labelImg(l, l==="county"?(D.cn[id]||id):l==="city"?cityName(id):l==="pct"?pctParts(id)[1]:id);
     if (map.hasImage(key)) map.removeImage(key);
     map.addImage(key,img,{pixelRatio:2});
   }
 }
 
+function lblSourceData(l){ return fc(lblPoints(l).map(([id,x,y])=>({type:"Feature",properties:{img:`lbl-${l}-${id}`},geometry:{type:"Point",coordinates:[x,y]}}))); }
 map.on("load",()=>{
   for (const l of LAYERS){
+    if (l==="pct") continue;
     map.addSource(l,{type:"geojson",data:fc(feats[l]),tolerance:.5});
-    map.addSource("lbl-"+l,{type:"geojson",data:fc(D.lbl[l].map(([id,x,y])=>({type:"Feature",properties:{img:`lbl-${l}-${id}`},geometry:{type:"Point",coordinates:[x,y]}})))});
+    map.addSource("lbl-"+l,{type:"geojson",data:lblSourceData(l)});
   }
   map.addSource("sel",{type:"geojson",data:EMPTY});
   map.addSource("hover",{type:"geojson",data:EMPTY});
@@ -336,6 +399,7 @@ map.on("load",()=>{
   map.addLayer({id:"sel-fill",type:"fill",source:"sel",paint:{"fill-color":cssv("--cd"),"fill-opacity":.16}});
   map.addLayer({id:"hover-fill",type:"fill",source:"hover",paint:{"fill-color":cssv("--cd"),"fill-opacity":.12}});
   for (const l of LAYERS){
+    if (l==="pct") continue;
     map.addLayer({id:"line-"+l,type:"line",source:l,layout:{"line-join":"round"},paint:{
       "line-color":cssv("--"+l),"line-width":interp(LINE[l].w),"line-opacity":l==="county"?.8:.92,
       ...(l==="county"?{"line-dasharray":[3,2.5]}:{})}});
@@ -343,10 +407,10 @@ map.on("load",()=>{
   map.addLayer({id:"sel-line",type:"line",source:"sel",layout:{"line-join":"round"},paint:{"line-color":cssv("--cd"),"line-width":4}});
   map.addLayer({id:"hover-line",type:"line",source:"hover",layout:{"line-join":"round"},paint:{"line-color":cssv("--cd"),"line-width":3,"line-dasharray":[2,1.5]}});
   map.addLayer({id:"ref",type:"raster",source:"ref"});
-  const minz={cd:0,sd:7.5,hd:8,county:8};
-  for (const l of ["county","hd","sd","cd"]){
-    map.addLayer({id:"lbl-"+l,type:"symbol",source:"lbl-"+l,minzoom:minz[l],layout:{
-      "icon-image":["get","img"],"icon-allow-overlap":false,"icon-padding":2,"symbol-sort-key":{cd:0,sd:1,hd:2,county:3}[l]}});
+  for (const l of ["pct","county","city","hd","sd","cd"]){
+    if (l==="pct") continue;
+    map.addLayer({id:"lbl-"+l,type:"symbol",source:"lbl-"+l,minzoom:META[l].min,layout:{
+      "icon-image":["get","img"],"icon-allow-overlap":false,"icon-padding":2,"symbol-sort-key":{cd:0,sd:1,hd:2,city:3,county:4,pct:5}[l]}});
   }
   buildLabels();
   map.setMinZoom(Math.max(4.5,map.getZoom()-.5));
@@ -370,13 +434,14 @@ function restyle(){
   whenReady(()=>{
     map.setPaintProperty("bg","background-color",cssv("--water"));
     if (!useOSM){ map.getSource("base").setTiles([esriUrl("Base")]); map.getSource("ref").setTiles([esriUrl("Reference")]); }
-    for (const l of LAYERS) map.setPaintProperty("line-"+l,"line-color",cssv("--"+l));
+    for (const l of LAYERS) if (map.getLayer("line-"+l)) map.setPaintProperty("line-"+l,"line-color",cssv("--"+l));
     buildLabels(); drawHighlight(); applyShade();
   });
 }
 function syncLayers(){
   whenReady(()=>{
     for (const l of LAYERS){
+      if (!map.getLayer("line-"+l)) continue;
       const v=on(l)?"visible":"none";
       map.setLayoutProperty("line-"+l,"visibility",v);
       map.setLayoutProperty("lbl-"+l,"visibility",v);
@@ -413,17 +478,18 @@ function intro(){
   out.innerHTML = `<div class="hint"><b>Search an address or click the map</b> to see every district that covers that spot. Search a district or county to see which others overlap it and how many people they share.</div>
   <div><p class="eyebrow">Try one</p><div class="rows">
     ${[["hd","65"],["sd","20"],["cd","14"],["county","011"]].map(([l,id])=>rowBtn(l,id)).join("")}
+    ${(()=>{const t=Object.keys(D.city.names).find(k=>D.city.names[k]==="Tampa"); return t?rowBtn("city",t):"";})()}
   </div></div>`;
 }
 function rowBtn(l,id,extra=""){
-  return `<button class="row" data-l="${l}" data-id="${id}"><span class="tag" style="--c:var(--${l})">${l==="county"?"CO":META[l].short}</span><span class="nm">${dname(l,id)}</span>${extra}<span class="go">→</span></button>`;
+  return `<button class="row" data-l="${l}" data-id="${id}"><span class="tag" style="--c:var(--${l})">${tagText(l)}</span><span class="nm">${esc(dname(l,id))}</span>${extra}<span class="go">→</span></button>`;
 }
 function showPoint(lat,lng,label,zoom){
   sel=null; hoverKey=null; drawHighlight();
   setHash(`pt=${lat.toFixed(5)},${lng.toFixed(5)}`);
   if (zoom) fly(lat,lng,13);
   setPin(lat,lng);
-  const found=["cd","sd","hd","county"].map(l=>[l,hit(l,lat,lng)]).filter(x=>x[1]);
+  const found=["cd","sd","hd","county","city","pct"].map(l=>[l,hit(l,lat,lng)]).filter(x=>x[1]);
   if (!found.length){ out.innerHTML=`<div class="hint">No Florida district there. That spot is offshore or outside the state.</div>`; return; }
   out.innerHTML = `<div>${label?`<p class="addr">${esc(label)}</p>`:""}<p class="eyebrow">At this spot · ${lat.toFixed(4)}, ${lng.toFixed(4)}</p>
     <div class="rows">${found.map(([l,f])=>rowBtn(l,f.properties.d)).join("")}</div></div>
@@ -442,7 +508,7 @@ function amend(title, y, n){
     <div class="sub2"><span>${fmt(y)} yes · ${fmt(n)} no</span><span>60% needed</span></div></div>`;
 }
 function results(l,id){
-  const e=E[l][id]; if(!e) return "";
+  const e=(statOf(l,id)||{}).e; if(!e || !e[1]) return "";
   return `<div><p class="eyebrow">2024 results within today's lines</p><div class="res">
     ${race("President","Harris",e[3],"Trump",e[2],e[1])}
     ${race("U.S. Senate","Mucarsel-Powell",e[5],"Scott",e[4],e[4]+e[5]+Math.max(0,e[1]-e[2]-e[3])*0)}
@@ -454,26 +520,28 @@ function results(l,id){
 function select(l,id,zoom=true){
   const f=index[l][id]; if(!f) return;
   sel={l,id}; hoverKey=null;
-  setHash(l==="county" ? "county-"+slug(D.cn[id]||id) : l+"-"+id);
+  setHash(l==="county" ? "county-"+slug(D.cn[id]||id) : l==="city" ? "city-"+slug(cityName(id)) : l==="pct" ? "pct-"+slug(id) : l+"-"+id);
   clearPin();
   const cb=document.getElementById("lyr-"+l); if(!cb.checked){ cb.checked=true; syncLayers(); }
   drawHighlight();
   if (zoom) flyBox(f.bbox);
-  const o=D.ov[l][id], pop=o.pop;
-  const sections=["cd","sd","hd","county"].filter(k=>k!==l).map(k=>{
-    const list=(o[k]||[]).filter(([,p])=>p>=Math.max(100,pop*.002));
-    const title={cd:"Congressional districts",sd:"State Senate districts",hd:"State House districts",county:"Counties"}[k];
+  const o=statOf(l,id); if(!o) return;
+  const pop=o.pop;
+  const sections=["cd","sd","hd","county","city"].filter(k=>k!==l).map(k=>{
+    const list=(o[k]||[]).filter(([,p])=>p>=Math.max(l==="pct"?1:100,pop*(l==="pct"?0:.002)));
+    if (!list.length) return "";
+    const title=ALL_TITLES[k];
     return `<div><p class="eyebrow">${title} · ${list.length}</p><div class="ov">${list.map(([oid,p])=>{
-      const pct=p/pop*100, whole=D.ov[k][oid].pop, ofThat=p/whole*100;
-      return `<button class="ovr" data-l="${k}" data-id="${oid}" title="${fmt(p)} people · ${ofThat.toFixed(0)}% of ${dtag(k,oid)}">
-        <span class="tag" style="--c:var(--${k})">${k==="county"?"CO":META[k].short}</span>
-        <span class="nm">${k==="county"?cname(oid):META[k].short+" "+oid}</span>
+      const pct=pop?p/pop*100:0, wholeS=statOf(k,oid), whole=wholeS?wholeS.pop:0, ofThat=whole?p/whole*100:0;
+      return `<button class="ovr" data-l="${k}" data-id="${oid}" title="${fmt(p)} people · ${ofThat.toFixed(0)}% of ${esc(dtag(k,oid))}">
+        <span class="tag" style="--c:var(--${k})">${tagText(k)}</span>
+        <span class="nm">${esc(dname(k,oid))}</span>
         <span class="pct">${pct>=99.5?"all":pct<1?"<1%":pct.toFixed(0)+"%"}</span>
         <span class="bar" style="--c:var(--${k})"><i style="width:${Math.max(pct,1.5)}%"></i></span></button>`;}).join("")}</div></div>`;
   }).join("");
-  out.innerHTML = `<div><div class="dtitle"><h2>${dname(l,id)}</h2><button class="close" id="clear">Clear</button></div>
-    <div class="stat">${fmt(pop)} residents (2020)</div></div>
-    <div class="hint" style="font-size:12.5px">Share of this district's residents in each overlapping district. Hover to outline it on the map; click to jump to it.</div>
+  out.innerHTML = `<div><div class="dtitle"><h2>${esc(dname(l,id))}</h2><button class="close" id="clear">Clear</button></div>
+    <div class="stat">${fmt(pop)} residents (2020)${o.pctn?" · "+fmt(o.pctn)+" precincts":""}</div></div>
+    <div class="hint" style="font-size:12.5px">${l==="pct"?"Where this precinct sits.":"Share of this area's residents in each overlapping district. Hover to outline it on the map; click to jump to it."}</div>
     ${results(l,id)}
     ${sections}`;
   out.scrollTop=0;
@@ -495,6 +563,9 @@ map.getCanvas().addEventListener("mouseleave",()=>{ tip.hidden=true; });
 map.on("movestart",()=>{ tip.hidden=true; });
 document.querySelectorAll(".layers input").forEach(i=>i.addEventListener("change",()=>{
   if (!i.checked && sel && sel.l===i.dataset.l){ sel=null; drawHighlight(); intro(); }
+  if (i.checked && i.dataset.l==="pct") loadPrecincts().catch(()=>{
+    out.innerHTML=`<div class="hint">Couldn't load the precinct file. Check that <b>data/fl-precincts.js</b> is uploaded next to the page.</div>`;
+  });
   syncLayers();
 }));
 
@@ -504,13 +575,22 @@ for (const l of ["cd","sd","hd"]) for (const id of Object.keys(index[l]).sort((a
   ALL.push({l,id,keys:[`${META[l].short} ${id}`, `${META[l].short}${id}`, `${META[l].long} ${id}`, `${{cd:"congress",sd:"senate",hd:"house"}[l]} ${id}`].map(s=>s.toLowerCase())});
 for (const id of Object.keys(index.county).sort((a,b)=>(D.cn[a]||"").localeCompare(D.cn[b]||"")))
   ALL.push({l:"county",id,keys:[(D.cn[id]||"").toLowerCase(), cname(id).toLowerCase()]});
+for (const id of Object.keys(D.city.names).sort((a,b)=>D.city.names[a].localeCompare(D.city.names[b])))
+  ALL.push({l:"city",id,keys:[D.city.names[id].toLowerCase()]});
+function addSearchLayer(l){
+  if (l!=="pct" || !PCT) return;
+  for (const id of Object.keys(PCT.st)){
+    const [c,n]=pctParts(id);
+    ALL.push({l:"pct",id,keys:[`${c.toLowerCase()} ${n.toLowerCase()}`, `${c.toLowerCase()} precinct ${n.toLowerCase()}`, `precinct ${n.toLowerCase()} ${c.toLowerCase()}`]});
+  }
+}
 const q=document.getElementById("q"), sugg=document.getElementById("sugg");
 let hits=[], active=0;
 function renderSugg(){
   const raw=q.value.trim();
   if (raw.length>=4 && !hits.some(h=>h.addr)) hits.push({addr:raw});
   if(!hits.length){ sugg.hidden=true; q.setAttribute("aria-expanded","false"); return; }
-  sugg.innerHTML=hits.map((h,i)=>(h.addr ? `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--ink-2)">ADDR</span>Search address “${esc(h.addr)}”</li>` : `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--${h.l})">${h.l==="county"?"CO":META[h.l].short}</span>${dname(h.l,h.id)}</li>`)).join("");
+  sugg.innerHTML=hits.map((h,i)=>(h.addr ? `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--ink-2)">ADDR</span>Search address “${esc(h.addr)}”</li>` : `<li role="option" id="s${i}" aria-selected="${i===active}" data-i="${i}"><span class="tag" style="--c:var(--${h.l})">${tagText(h.l)}</span>${esc(dname(h.l,h.id))}</li>`)).join("");
   sugg.hidden=false; q.setAttribute("aria-expanded","true");
 }
 q.addEventListener("input",()=>{
@@ -566,6 +646,9 @@ function fromHash(){
   let m;
   if ((m=h.match(/^(cd|sd|hd)-(\d+)$/)) && index[m[1]][String(+m[2])]) return select(m[1],String(+m[2])), true;
   if ((m=h.match(/^county-(.+)$/))){ const id=Object.keys(D.cn).find(k=>slug(D.cn[k])===m[1]); if(id) return select("county",id), true; }
+  if ((m=h.match(/^city-(.+)$/))){ const id=Object.keys(D.city.names).find(k=>slug(D.city.names[k])===m[1]); if(id) return select("city",id), true; }
+  if ((m=h.match(/^pct-(.+)$/))){ const want=m[1]; document.getElementById("lyr-pct").checked=true;
+    loadPrecincts().then(()=>{ const id=Object.keys(PCT.st).find(k=>slug(k)===want); if(id) select("pct",id); }).catch(()=>{}); return true; }
   if ((m=h.match(/^pt=(-?[\d.]+),(-?[\d.]+)$/))) return showPoint(+m[1],+m[2],null,true), true;
   if ((m=h.match(/^layers=([a-z,]+)$/))) { const s=m[1].split(","); for(const l of LAYERS) document.getElementById("lyr-"+l).checked=s.includes(l); syncLayers(); }
   return false;
